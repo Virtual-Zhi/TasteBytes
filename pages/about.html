@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About US | TasteBytes</title>
+    <meta name="description" content="">
+    <link rel="stylesheet" href="../cssStyles/menuStyles.css">
+    <link rel="stylesheet" href="../cssStyles/aboutPage.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="../index.html" class="logo">TasteBytes</a>
+        <div class="nav-links" id="navLinks">
+            <a href="about.html">About</a>
+            <a href="./htmlPages/recipes.html">Recipes</a>
+            <a href="./htmlPages/categories.html">Challenges</a>
+            <a href="./htmlPages/contact.html">Contact</a>
+            <a href="login.html" class="signin-btn">Sign In</a>
+        </div>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+
+    <!-- About us -->
+    <div class="mission-banner">
+        <div class="mission-text">
+            <h1>About Us</h1>
+            <p>
+                At Velocixity, we believe sports are more than games — they're a way to connect, grow, and thrive
+                together.
+                Our mission is to create a welcoming space where every individual feels inspired.
+                We deliver high-quality coaching, accessible programming, and purposeful
+                events designed to
+                develop physical skills, emotional resilience, and teamwork. By prioritizing inclusivity, respect, and
+                fun, we ensure
+                every participant feels seen, supported, and inspired to reach their potential.
+            </p>
+        </div>
+    </div>
+
+    <!-- Core Values -->
+    <section class="core-values">
+        <h2>Our Core Values</h2>
+        <ul>
+            <li>Inclusivity</li>
+            <li>Sportsmanship</li>
+            <li>Community</li>
+            <li>Growth</li>
+            <li>Passion</li>
+        </ul>
+    </section>
+
+    <!-- Diversity -->
+    <section class="diversity-stats">
+        <h3>Building an Inclusive Community</h3>
+        <div class="stats-grid">
+            <div class="stats-card">
+                <h4>51%</h4>
+                <p>of our members are women</p>
+            </div>
+            <div class="stats-card">
+                <h4>38%</h4>
+                <p>from underrepresented backgrounds</p>
+            </div>
+            <div class="stats-card">
+                <h4>32%</h4>
+                <p>part of the LGBTQ community</p>
+            </div>
+            <div class="stats-card">
+                <h4>100%</h4>
+                <p>feel welcome and included</p>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+
+            <div class="footer-column">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="facilities.html">Facilities Rental</a></li>
+                    <li><a href="programs.html">Club Sports</a></li>
+                    <li><a href="results.html">Tournaments</a></li>
+                    <li><a href="events.html">Events</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Locations</h4>
+                <ul>
+                    <li>Boston, MA</li>
+                    <li>Seattle, WA</li>
+                    <li>Brooklynn, NYC</li>
+                    <li>Miami, FL</li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Velocixity</h4>
+                <ul>
+                    <li><a href="#" id="termsLink">Terms & Conditions</a></li>
+                    <li><a href="#" id="privacyLink">Privacy Policy</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Get in touch</h4>
+                <form class="subscribe-form" id="subscribe-form">
+                    <input type="email" id="subscribeEmail" placeholder="Enter email address" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 Velocixity. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Popup -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Event Details</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <p id="modalMessage"></p>
+        </div>
+    </div>
+    <div id="notification" class="notification"></div>
+
+    <script src="../jsScripts/menuJS.js"></script>
+</body>
+
+</html>

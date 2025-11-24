@@ -1,0 +1,202 @@
+/* Mission Banner */
+.mission-banner {
+    background: url('../images/about-mission-banner.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 0 -250px;
+    position: relative;
+    padding: 14rem 2rem;
+    text-align: center;
+    color: white;
+}
+
+.mission-banner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 12rem 2rem;
+}
+
+.mission-text {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.mission-text h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.mission-text p {
+    font-size: 20px;
+    line-height: 1.6;
+}
+
+@media (max-width: 1800px) {
+    .mission-banner {
+        padding: 12rem 2rem;
+        background-position: center -200px;
+    }
+}
+
+@media (max-width: 1500px) {
+    .mission-banner {
+        padding: 8rem 2rem;
+        background-position: center -200px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .mission-banner {
+        padding: 8rem 2rem;
+        background-position: center -50px;
+    }
+}
+
+@media (max-width: 1000px) {
+    .mission-banner {
+        padding: 8rem 2rem;
+        background-position: center 0px;
+    }
+}
+
+/* Core Values */
+.core-values {
+    background: #f7f9fc;
+    color: #0072ff;
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.core-values h2 {
+    font-size: 36px;
+    margin-bottom: 30px;
+}
+
+.core-values ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.core-values li {
+    background: white;
+    text-align: center;
+    border-radius: 10px;
+    padding: 20px;
+    font-size: 15px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.core-values li:hover {
+    transform: translateY(-5px);
+}
+
+.diversity-stats {
+    padding: 50px 20px;
+    text-align: center;
+    background-color: #ffffffee;
+}
+
+.diversity-stats h3 {
+    font-size: 30px;
+    color: #0072ff;
+    margin-bottom: 40px;
+}
+
+.stats-grid {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.stats-card {
+    background: linear-gradient(to right, #00c6ff, #0072ff);
+    color: white;
+    border-radius: 16px;
+    padding: 25px 30px;
+    width: 260px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+}
+
+.stats-card h4 {
+    font-size: 40px;
+    margin-bottom: 15px;
+}
+
+.stats-card p {
+    font-size: 18px;
+    line-height: 1.4;
+}
+
+
+.join-us {
+    text-align: center;
+    padding: 60px 20px;
+    background: linear-gradient(to right, #00c6ff, #0072ff);
+    color: white;
+}
+
+.join-us h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+.join-us p {
+    font-size: 18px;
+    max-width: 800px;
+    margin: 0 auto 30px;
+    line-height: 1.6;
+}
+
+.cta-btn {
+    display: inline-block;
+    margin: 10px;
+    padding: 12px 24px;
+    background: white;
+    color: #0072ff;
+    border-radius: 6px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.cta-btn:hover {
+    background: #f0f0f0;
+}
+
+@media(max-width: 768px) {
+    h1 {
+        font-size: 36px;
+    }
+
+    .mission-text h2 {
+        font-size: 28px;
+    }
+
+    .mission-text p {
+        font-size: 18px;
+    }
+
+    .core-values h2 {
+        font-size: 28px;
+    }
+
+    .diversity-banner h2 {
+        font-size: 28px;
+    }
+
+    .stats-card {
+        width: 80%;
+        max-width: 300px;
+    }
+}

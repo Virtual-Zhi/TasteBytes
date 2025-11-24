@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TasteBytes Hub</title>
+    <meta name="description" content="">
+    <link rel="stylesheet" href="../cssStyles/menuStyles.css">
+    <link rel="stylesheet" href="../cssStyles/indexPage.css">
+
+</head>
+
+<style>
+    .account-title {
+        text-align: center;
+        margin-top: 2rem;
+        font-size: 40px;
+        font-weight: 600;
+        color: #333
+    }
+
+    body {
+        padding-top: 70px;
+    }
+
+    .section {
+        margin: 10px 0;
+        padding: 0;
+    }
+
+    .section-title {
+        margin: 10px 0;
+        padding: 0;
+        font-size: 25px;
+    }
+
+    .featured-recipes {
+        padding: 10px 0;
+    }
+
+    .profile-card {
+        font-family: Arial, sans-serif;
+        max-width: 300px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        text-align: center;
+        justify-self: center;
+    }
+
+    .profile-card h2 {
+        margin: 0;
+        font-size: 20px;
+    }
+
+    .profile-card h2 span {
+        color: #777;
+        font-size: 14px;
+    }
+
+    .stats {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 15px;
+    }
+
+    .stat strong {
+        display: block;
+        font-size: 18px;
+        color: #2a7ae2;
+    }
+
+    .stat span {
+        font-size: 12px;
+        color: #555;
+    }
+</style>
+
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="../index.html" class="logo">TasteBytes</a>
+        <div class="nav-links" id="navLinks">
+            <a href="about.html">About</a>
+            <a href="./htmlPages/recipes.html">Recipes</a>
+            <a href="./htmlPages/categories.html">Challenges</a>
+            <a href="./htmlPages/contact.html">Contact</a>
+            <a href="login.html" class="signin-btn">Sign In</a>
+        </div>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- user info -->
+    <div class="profile-card">
+        <h2>John Doe <span>@johndoe</span></h2>
+        <div class="stats">
+            <div class="stat">
+                <strong>1,245</strong>
+                <span>Followers</span>
+            </div>
+            <div class="stat">
+                <strong>320</strong>
+                <span>Following</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recipie info -->
+    <section class="featured-recipes">
+        <div class="section-title">Your Recipe Information</div>
+        <div class="recipe-grid">
+            <div class="recipe-card">
+                <h4>40 Saved Recipes</h4> <!-- hardcoded for now, change later -->
+            </div>
+
+            <div class="recipe-card">
+                <h4>5 Recipes You Posted</h4> <!-- hardcoded for now, change later -->
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Recipie info -->
+    <section class="featured-recipes">
+        <div class="section-title">Your Current Account Plan</div>
+        <div class="recipe-grid">
+            <div class="recipe-card">
+                <h4>Free</h4> <!-- hardcoded for now, change later -->
+            </div>
+
+            <div class="recipe-card">
+                <h4>Premium</h4> <!-- hardcoded for now, change later -->
+                <a href="./htmlPages/recipes.html" class="recipe-link">Upgrade to Premium</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Spotlight -->
+    <section class="spotlight-section">
+        <div class="section-title">Your Contact Information</div>
+        <p>Your email: </p>
+        <p>Your phone number: </p>
+    </section>
+
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+
+            <div class="footer-column">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="./htmlPages/recipes.html">Recipes</a></li>
+                    <li><a href="./htmlPages/categories.html">Categories</a></li>
+                    <li><a href="./htmlPages/tips.html">Cooking Tips</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Popular Categories</h4>
+                <ul>
+                    <li>Breakfast</li>
+                    <li>Desserts</li>
+                    <li>Vegetarian</li>
+                    <li>Holiday Specials</li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>TasteBuds</h4>
+                <ul>
+                    <li><a href="#" id="termsLink">Terms & Conditions</a></li>
+                    <li><a href="#" id="privacyLink">Privacy Policy</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Subscribe To Our Newsletter</h4>
+                <form class="subscribe-form" id="subscribe-form">
+                    <input type="email" id="subscribeEmail" placeholder="Enter email address" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 TasteBuds. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Popup -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Recipe Details</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <p id="modalMessage"></p>
+        </div>
+    </div>
+    <div id="notification" class="notification"></div>
+
+    <script src="../jsScripts/accountPage.js"></script>
+    <script src="../jsScripts/menuJS.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TasteBytes Hub</title>
+    <meta name="description" content="">
+    <link rel="stylesheet" href="cssStyles/menuStyles.css">
+    <link rel="stylesheet" href="cssStyles/indexPage.css">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="index.html" class="logo">TasteBytes</a>
+        <div class="nav-links" id="navLinks">
+            <a href="./pages/about.html">About</a>
+            <a href="./htmlPages/recipes.html">Recipes</a>
+            <a href="./htmlPages/categories.html">Challenges</a>
+            <a href="./htmlPages/contact.html">Contact</a>
+            <a href="./pages/login.html" class="signin-btn">Sign In</a>
+        </div>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- Banner with Search -->
+    <section class="title">
+        <h1 class="titleCaption">Cook, Share, and Savor</h1>
+        <div class="banner-search">
+            <input type="text" id="recipeSearch" placeholder="Search recipes..." />
+            <button id="searchButton">Search</button>
+        </div>
+        <button id="startButton">Explore Below</button>
+    </section>
+
+    <!-- Featured Recipes -->
+    <section class="featured-recipes">
+        <div class="section-title">Featured Recipes</div>
+        <div class="recipe-grid">
+            <div class="recipe-card">
+                <img src="../images/pumpkin-latte.jpg" alt="Pumpkin Spice Latte">
+                <h4>Pumpkin Spice Latte</h4>
+                <p>Cozy autumn drink with cinnamon and nutmeg.</p>
+                <a href="./htmlPages/recipes.html" class="recipe-link">View Recipe</a>
+            </div>
+            <div class="recipe-card">
+                <img src="../images/lasagna.jpg" alt="Classic Lasagna">
+                <h4>Classic Lasagna</h4>
+                <p>Layers of pasta, rich meat sauce, and creamy cheese.</p>
+                <a href="./htmlPages/recipes.html" class="recipe-link">View Recipe</a>
+            </div>
+            <div class="recipe-card">
+                <img src="../images/roast-turkey.jpg" alt="Holiday Roast Turkey">
+                <h4>Holiday Roast Turkey</h4>
+                <p>Perfect centerpiece for festive gatherings.</p>
+                <a href="./htmlPages/recipes.html" class="recipe-link">View Recipe</a>
+            </div>
+        </div>
+        <div class="see-all">
+            <a class="see-all-link" href="./htmlPages/recipes.html">See All Recipes</a>
+        </div>
+    </section>
+
+    <!-- Spotlight -->
+    <section class="spotlight-section">
+        <div class="section-title">Recipe of the Week</div>
+        <div class="spotlight-card">
+            <img src="../images/chocolate-cake.jpg" alt="Chocolate Cake">
+            <h4>Decadent Chocolate Cake</h4>
+            <p>Rich, moist, and perfect for celebrations.</p>
+            <a href="./htmlPages/recipes.html" class="recipe-link">View Recipe</a>
+        </div>
+
+        <!-- Button to toggle tips -->
+        <button id="toggleTipsBtn">Show Cooking Tips</button>
+
+        <!-- Hidden tips initially -->
+        <div id="tipsSection" class="tips-section hidden">
+            <div class="section-title">Quick Cooking Tips</div>
+            <ul>
+                <li>Always let meat rest before slicing.</li>
+                <li>Use fresh herbs to elevate flavor.</li>
+                <li>Salt pasta water generously for better taste.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section class="services-section">
+        <div class="section-title">Made for Foodies</div>
+        <div class="service-grid">
+            <div class="service-card">
+                <img src="../images/icon-ingredients.png" alt="Ingredient Spotlight Icon" class="service-icon">
+                <h3>Ingredient Spotlight</h3>
+                <p>Learn how to use unique ingredients and elevate everyday meals.</p>
+            </div>
+            <div class="service-card">
+                <img src="../images/icon-challenge.png" alt="Community Challenge Icon" class="service-icon">
+                <h3>Community Challenges</h3>
+                <p>Join monthly cooking contests and show off your skills.</p>
+            </div>
+            <div class="service-card">
+                <img src="../images/icon-share.png" alt="Share & Inspire Icon" class="service-icon">
+                <h3>Share & Inspire</h3>
+                <p>Upload your own recipes and photos to inspire fellow foodies.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+
+            <div class="footer-column">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="./htmlPages/recipes.html">Recipes</a></li>
+                    <li><a href="./htmlPages/categories.html">Categories</a></li>
+                    <li><a href="./htmlPages/tips.html">Cooking Tips</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>TasteBuds</h4>
+                <ul>
+                    <li><a href="#" id="termsLink">Terms & Conditions</a></li>
+                    <li><a href="#" id="privacyLink">Privacy Policy</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Subscribe To Our Newsletter</h4>
+                <form class="subscribe-form" id="subscribe-form">
+                    <input type="email" id="subscribeEmail" placeholder="Enter email address" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 TasteBuds. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Popup -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Recipe Details</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <p id="modalMessage"></p>
+        </div>
+    </div>
+    <div id="notification" class="notification"></div>
+
+    <script src="jsScripts/indexPage.js"></script>
+    <script src="jsScripts/menuJS.js"></script>
+</body>
+
+</html>
