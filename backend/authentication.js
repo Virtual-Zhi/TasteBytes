@@ -1,8 +1,6 @@
+const { compare } = require("bcryptjs");
 const http = require("http");
 const { MongoClient, ObjectId } = require("mongodb");
-const bcrypt = require("bcryptjs");
-const crypto = require("crypto");
-
 // MongoDB connection
 const url = "mongodb+srv://BabyCarrotsDB:RuLu9duhvIiTSUPG@finalproj.l6ftjqt.mongodb.net/?appName=FinalProj";
 const client = new MongoClient(url);
@@ -56,17 +54,14 @@ const server = http.createServer(async (req, res) => {
                     return res.end(JSON.stringify({ message: "Username already exists" }));
                 }
 
-                const hashedPassword = await bcrypt.hash(newPassword, 10);
                 await db.collection("users").insertOne({
                     username: newUsername,
                     email: newEmail,
                     phone: newPhone,
                     plan: plan || "Free",
-                    password: hashedPassword,
+                    password: newPassword,
                     posts: [],
                     savedRecipes: [],
-                    followers: [],
-                    following: [],
                     createdAt: new Date(),
                     lastLogin: null,
                 });
@@ -91,13 +86,13 @@ const server = http.createServer(async (req, res) => {
                     return res.end(JSON.stringify({ message: "User not found" }));
                 }
 
-                const isMatch = await bcrypt.compare(password, user.password);
+                const isMatch = compare(password, user.password);
                 if (!isMatch) {
                     res.statusCode = 400;
                     return res.end(JSON.stringify({ message: "Invalid credentials" }));
                 }
 
-                const sessionId = crypto.randomBytes(16).toString("hex");
+                const sessionId = user._id.toString();
                 sessions[sessionId] = { id: user._id.toString(), username: user.username };
 
                 res.setHeader("Set-Cookie", `sessionId=${sessionId}; HttpOnly; Path=/`);
@@ -134,8 +129,6 @@ const server = http.createServer(async (req, res) => {
                 plan: user.plan || "Free",
                 savedRecipes: user.savedRecipes,
                 posts: user.posts,
-                followers: user.followers.length,
-                following: user.following.length,
             };
 
             res.end(JSON.stringify({ message: "Profile data", user: profileData }));

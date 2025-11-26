@@ -1,38 +1,45 @@
-console.log("LOADED JS");
+console.log("Dashboard JS Loaded");
 
 async function loadAccount() {
     console.log("loadAccount triggered");
+
     try {
         const res = await fetch("http://localhost:8080/profile", {
             credentials: "include"
         });
-        const data = await res.json();
 
-        // In case user somehow gets this page without logging in
+        const data = await res.json();
+        console.log("Profile data:", data);
+
+        // Check login status
         if (data.error || data.message === "Not logged in") {
-            document.querySelector(".account-title").textContent = "Please sign in first";
+            document.querySelector(".profile-banner h2").textContent = "Please sign in first";
+            document.querySelector(".profile-banner p").textContent = "";
             return;
         }
 
         const user = data.user;
-        const profileCard = document.querySelector(".profile-card");
-        profileCard.querySelector("h2").innerHTML = `${user.username} <span>@${user.username}</span>`;
 
-        const stats = profileCard.querySelectorAll(".stat");
-        stats[0].querySelector("strong").textContent = user.followers;
-        stats[0].querySelector("span").textContent = "Followers";
+        const banner = document.querySelector(".profile-banner");
+        banner.querySelector("h2").textContent = user.username;
+        banner.querySelector("p").textContent = `@${user.username}`;
 
-        stats[1].querySelector("strong").textContent = user.following;
-        stats[1].querySelector("span").textContent = "Following";
+        const statCards = document.querySelectorAll(".stat-card");
 
-        document.querySelectorAll(".recipe-card h4")[0].textContent = `${user.savedRecipes.length} Saved Recipes`;
-        document.querySelectorAll(".recipe-card h4")[1].textContent = `${user.posts.length} Recipes You Posted`;
 
-        const planCards = document.querySelectorAll(".featured-recipes .recipe-card h4");
-        planCards[2].textContent = user.plan;
+        statCards[0].querySelector(".number").textContent = user.savedRecipes.length;
 
-        document.querySelector(".spotlight-section p:nth-of-type(1)").textContent = `Your email: ${user.email}`;
-        document.querySelector(".spotlight-section p:nth-of-type(2)").textContent = `Your phone number: ${user.phone}`;
+        statCards[1].querySelector(".number").textContent = user.posts.length;
+
+        statCards[2].querySelector(".number").textContent = user.plan;
+
+
+        const contact = document.querySelector(".contact-card");
+        const info = contact.querySelectorAll("p");
+
+        info[0].innerHTML = `Email: <strong>${user.email}</strong>`;
+        info[1].innerHTML = `Phone: <strong>${user.phone}</strong>`;
+
     } catch (err) {
         console.error("Error loading account info", err);
     }
