@@ -51,7 +51,7 @@ async function handleAuth(req, res, sessions) {
                     return res.end(JSON.stringify({ message: "User not found" }));
                 }
 
-                if (!compare(password, user.password)) {
+                if (password != user.password) {
                     res.statusCode = 400;
                     return res.end(JSON.stringify({ message: "Invalid credentials" }));
                 }
