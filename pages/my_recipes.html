@@ -69,4 +69,40 @@
       </div>
     </div>
   </div>
+
+  <script>
+    // form submission
+        document.getElementById('recipeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // get the form values
+            const recipeName = document.getElementById('recipeName').value.trim();
+            const recipeType = document.getElementById('recipeType').value;
+            const prepTime = document.getElementById('prepTime').value;
+            const ingredients = document.getElementById('ingredients').value
+                .split('\n')
+                .map(ing => ing.trim())
+                .filter(ing => ing.length > 0);
+            const tips = document.getElementById('tips').value.trim();
+
+            // create a recipe object
+            const newRecipe = {
+                name: recipeName,
+                type: recipeType,
+                cookTime: parseInt(prepTime),
+                ingredients: ingredients,
+                tips: tips,
+                uploadedAt: new Date().toISOString()
+            };
+
+            
+            console.log('New Recipe:', newRecipe);
+
+            // success message
+            showNotification('Recipe uploaded successfully!');
+
+            // reset the form 
+            this.reset();
+        });
+  </script>
 </body>

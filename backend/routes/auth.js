@@ -62,6 +62,7 @@ async function handleAuth(req, res, sessions) {
                 res.setHeader("Set-Cookie", `sessionId=${sessionId}; HttpOnly; Path=/`);
                 res.end(JSON.stringify({ message: "Login successful!", username: user.username }));
             } catch (err) {
+                console.error("Login error:", err);
                 res.statusCode = 500;
                 res.end(JSON.stringify({ message: "Server error", error: err.message }));
             }
