@@ -19,7 +19,14 @@ async function handleRecipes(req, res, sessions) {
         req.on("data", chunk => body += chunk);
         req.on("end", async () => {
             try {
-                const { title, ingredients, instructions } = JSON.parse(body);
+                const {
+                    title,
+                    type,
+                    prepTime,
+                    ingredients,
+                    instructions,
+                    tips
+                } = JSON.parse(body);
 
                 if (!title || !ingredients || !instructions) {
                     res.statusCode = 400;
@@ -28,16 +35,25 @@ async function handleRecipes(req, res, sessions) {
 
                 const recipe = {
                     title,
+                    type,
+                    prepTime,
                     ingredients,
                     instructions,
-                    authorId: session.id,
-                    createdAt: new Date(),
+                    tips,
+                    rating: {
+                        average: 0,
+                        count: 0
+                    },
+                    ownerId: session.id,
+                    createdAt: new Date()
                 };
 
-                await db.collection("recipes").insertOne(recipe);
+                const insertResult = await db.collection("recipes").insertOne(recipe);
+                recipe._id = insertResult.insertedId;
+
                 await db.collection("users").updateOne(
                     { _id: new ObjectId(session.id) },
-                    { $push: { posts: recipe } }
+                    { $push: { posts: recipe._id } }
                 );
 
                 res.end(JSON.stringify({ message: "Recipe posted successfully!", recipe }));
@@ -52,6 +68,22 @@ async function handleRecipes(req, res, sessions) {
     if (req.method === "GET" && req.url === "/recipes") {
         try {
             const recipes = await db.collection("recipes").find().toArray();
+
+            // collect all ownerIds
+            const ownerIds = recipes.map(r => new ObjectId(r.ownerId));
+            const owners = await db.collection("users")
+                .find({ _id: { $in: ownerIds } }, { projection: { username: 1 } })
+                .toArray();
+
+            // build lookup map
+            const ownerMap = {};
+            owners.forEach(u => { ownerMap[u._id.toString()] = u.username; });
+
+            // attach names
+            recipes.forEach(r => {
+                r.ownerName = ownerMap[r.ownerId?.toString()] || "Unknown";
+            });
+
             res.end(JSON.stringify({ message: "All recipes", recipes }));
         } catch (err) {
             res.statusCode = 500;
@@ -59,6 +91,7 @@ async function handleRecipes(req, res, sessions) {
         }
         return true;
     }
+
 
     return false;
 }

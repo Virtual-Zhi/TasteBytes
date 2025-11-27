@@ -67,7 +67,6 @@ window.onload = async () => {
                 <button class="dropbtn">${data.user.username} ▼</button>
                 <div class="dropdown-content">
                     <a href="${prefix}pages/my_account.html">Profile</a>
-                    <a href="${prefix}htmlPages/saved.html">Saved Recipes</a>
                     <a href="#" id="logoutBtn">Logout</a>
                 </div>
             `;

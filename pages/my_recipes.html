@@ -52,9 +52,15 @@
         </div>
 
         <div class="form-group">
-          <label for="tips">Cooking Tips & Instructions</label>
+          <label for="instructions">Instructions *</label>
+          <textarea id="instructions" class="instructions-textarea"
+            placeholder="Share the step-by-step instructions"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="tips">Cooking Tips</label>
           <textarea id="tips" class="tips-textarea"
-            placeholder="Share your cooking tips, step-by-step instructions, or any helpful advice..."></textarea>
+            placeholder="Share your cooking tips or any helpful advice with this dish"></textarea>
         </div>
 
         <button type="submit" class="submit-btn">📤 Upload Recipe</button>
@@ -69,40 +75,4 @@
       </div>
     </div>
   </div>
-
-  <script>
-    // form submission
-        document.getElementById('recipeForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            // get the form values
-            const recipeName = document.getElementById('recipeName').value.trim();
-            const recipeType = document.getElementById('recipeType').value;
-            const prepTime = document.getElementById('prepTime').value;
-            const ingredients = document.getElementById('ingredients').value
-                .split('\n')
-                .map(ing => ing.trim())
-                .filter(ing => ing.length > 0);
-            const tips = document.getElementById('tips').value.trim();
-
-            // create a recipe object
-            const newRecipe = {
-                name: recipeName,
-                type: recipeType,
-                cookTime: parseInt(prepTime),
-                ingredients: ingredients,
-                tips: tips,
-                uploadedAt: new Date().toISOString()
-            };
-
-            
-            console.log('New Recipe:', newRecipe);
-
-            // success message
-            showNotification('Recipe uploaded successfully!');
-
-            // reset the form 
-            this.reset();
-        });
-  </script>
 </body>

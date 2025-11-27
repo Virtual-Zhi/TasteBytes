@@ -28,6 +28,45 @@ function showDashboard(dashboard, dynamic) {
     dynamic.innerHTML = "";
 }
 
+async function submitRecipe() {
+    const form = document.getElementById('recipeForm');
+    form.addEventListener('submit', async (e) => {
+        // collect form values
+        e.preventDefault();
+        const recipe = {
+            title: document.getElementById('recipeName').value.trim(),
+            type: document.getElementById('recipeType').value,
+            prepTime: document.getElementById('prepTime').value,
+            ingredients: document.getElementById('ingredients').value
+                .split('\n')
+                .map(i => i.trim())
+                .filter(i => i),
+            instructions: document.getElementById('instructions').value.trim(),
+            tips: document.getElementById('tips').value.trim(),
+        };
+
+        try {
+            const res = await fetch('http://localhost:8080/post_recipe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(recipe),
+                credentials: 'include'
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                alert('Recipe posted successfully!');
+                form.reset();
+            } else {
+                alert(data.message || 'Error uploading recipe');
+            }
+        } catch (err) {
+            alert('Network error while uploading recipe');
+        }
+    });
+}
+
+
 async function showMyRecipes(dashboard, dynamic, path) {
     dashboard.style.display = "none";
     dynamic.style.display = "block";
@@ -42,29 +81,32 @@ async function showMyRecipes(dashboard, dynamic, path) {
             tab.classList.add('active');
             dynamic.querySelector(`#${tab.dataset.target}`).classList.add('active');
         });
-    });
+        });
+        submitRecipe();
     } catch (err) {
         console.error("Error loading My Recipes:", err);
         dynamic.innerHTML = "<p>Could not load My Recipes.</p>";
     }
 }
 
+
 window.addEventListener("load", () => {
     const dashboard = document.getElementById("dashboardContent");
     const dynamic = document.getElementById("dynamicContent");
 
-    document.querySelectorAll(".dashboardLink").forEach(el => {
-        el.onclick = e => {
+    document.querySelectorAll(".dashboardLink").forEach(x => {
+        x.onclick = e => {
             e.preventDefault();
             showDashboard(dashboard, dynamic);
         };
     });
 
-    document.querySelectorAll(".myRecipesLink").forEach(el => {
-        el.onclick = e => {
+    document.querySelectorAll(".myRecipesLink").forEach(x => {
+        x.onclick = e => {
             e.preventDefault();
             showMyRecipes(dashboard, dynamic, "my_recipes.html");
         };
     });
+
     loadAccount();
 });
