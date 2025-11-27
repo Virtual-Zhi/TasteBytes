@@ -82,12 +82,21 @@ window.onload = async () => {
                     credentials: "include"
                 });
                 alert("Logged out!");
-                location.reload();
+                if (location.pathname.endsWith("my_account.html")) {
+                    location = "../index.html";
+                } else {
+                    location.reload();
+                }
             });
         } else {
 
             signinBtn.textContent = "Sign In";
-            signinBtn.href = "./pages/login.html";
+
+            if (location.pathname.endsWith("index.html")) {
+                signinBtn.href = "./pages/login.html";
+            } else {
+                signinBtn.href = "login.html";
+            }
         }
     } catch (err) {
         console.error("Error checking login:", err);

@@ -6,27 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recipe Manager</title>
     <link rel="stylesheet" href="../cssStyles/recipesPage.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
-        }
-
-        .recipe-content {
-            padding: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="../cssStyles/menuStyles.css">
 </head>
 
 <body>
+    <nav class="navbar">
+        <a href="../index.html" class="logo">TasteBytes</a>
+        <div class="nav-links" id="navLinks">
+            <a href="about.html">About</a>
+            <a href="recipes.html">Recipes</a>
+            <a href="./htmlPages/categories.html">Challenges</a>
+            <a href="./htmlPages/contact.html">Contact</a>
+            <a href="login.html" class="signin-btn">Sign In</a>
+        </div>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
     <div class="container">
-        <h1>🍳 Recipe Manager</h1>
+        <h1>All Recipes</h1>
 
         <div class="filters">
             <div class="filter-row">
@@ -57,6 +58,55 @@
 
         <div class="recipes-grid" id="recipesGrid"></div>
     </div>
+
+
+    <footer class="footer">
+        <div class="footer-container">
+
+            <div class="footer-column">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="./htmlPages/recipes.html">Recipes</a></li>
+                    <li><a href="./htmlPages/categories.html">Categories</a></li>
+                    <li><a href="./htmlPages/tips.html">Cooking Tips</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>TasteBuds</h4>
+                <ul>
+                    <li><a href="#" id="termsLink">Terms & Conditions</a></li>
+                    <li><a href="#" id="privacyLink">Privacy Policy</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Subscribe To Our Newsletter</h4>
+                <form class="subscribe-form" id="subscribe-form">
+                    <input type="email" id="subscribeEmail" placeholder="Enter email address" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 TasteBuds. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Popup -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Recipe Details</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <p id="modalMessage"></p>
+        </div>
+    </div>
+    <div id="notification" class="notification"></div>
+
+    <script src="../jsScripts/menuJS.js"></script>
 
     <script>
         // Sample recipe data (this will eventually come from your SQL database)
