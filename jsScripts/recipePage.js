@@ -1,5 +1,26 @@
 let recipes = [];
 let userCollection = new Set();
+let isLoggedIn = false;
+
+async function checkLogin() {
+    try {
+        const res = await fetch('http://localhost:8080/profile', {
+            method: 'GET',
+            credentials: 'include'
+        });
+        if (res.ok) {
+            const data = await res.json();
+            isLoggedIn = true;
+
+            userCollection = new Set(data.user.savedRecipes || []);
+        } else {
+            isLoggedIn = false;
+        }
+    } catch (err) {
+        console.error('Login check failed:', err);
+        isLoggedIn = false;
+    }
+}
 
 async function loadRecipes() {
     try {
@@ -32,31 +53,47 @@ function renderRecipes(recipesToShow) {
         return;
     }
 
-    grid.innerHTML = recipesToShow.map(recipe => `
-    <div class="recipe-card">
-        <div class="recipe-image">🍴</div>
-        <div class="recipe-content">
-            <h2 class="recipe-title">${recipe.title}</h2>
-            <span class="recipe-type">${recipe.type || ''}</span>
-            <div class="recipe-meta">
-                <span>⏱️ ${recipe.prepTime || 0} min</span>
-                <span>⭐ ${recipe.rating?.average || 0}/5 (${recipe.rating?.count || 0} ratings)</span>
-            </div>
-            <div class="recipe-ingredients">
-                <strong>Ingredients:</strong> ${(recipe.ingredients || []).slice(0, 3).join(', ')}${(recipe.ingredients || []).length > 3 ? '…' : ''}
-            </div>
-            <div class="recipe-owner">
-                <p>Made by: ${recipe.ownerName || recipe.ownerId}</p>
-            </div>
-            <button 
-                class="add-to-collection-btn ${userCollection.has(recipe._id) ? 'added' : ''}" 
-                onclick="toggleCollection('${recipe._id}')">
-                ${userCollection.has(recipe._id) ? '✓ In Collection' : '+ Add to Collection'}
+    grid.innerHTML = recipesToShow.map(recipe => {
+        let buttons = `
+            <button class="view-recipe-btn" onclick="viewRecipe('${recipe._id}')">
+                👀 View Recipe
             </button>
-        </div>
-    </div>`).join('');
+        `;
 
+        if (isLoggedIn) {
+            buttons += `
+                <button 
+                    class="add-to-collection-btn ${userCollection.has(recipe._id) ? 'added' : ''}" 
+                    onclick="toggleCollection('${recipe._id}')">
+                    ${userCollection.has(recipe._id) ? '✓ In Collection' : '+ Add to Collection'}
+                </button>
+            `;
+        }
+
+        return `
+        <div class="recipe-card">
+            <div class="recipe-image">🍴</div>
+            <div class="recipe-content">
+                <h2 class="recipe-title">${recipe.title}</h2>
+                <span class="recipe-type">${recipe.type || ''}</span>
+                <div class="recipe-meta">
+                    <span>⏱️ ${recipe.prepTime || 0} min</span>
+                    <span>⭐ ${recipe.rating?.average || 0}/5 (${recipe.rating?.count || 0} ratings)</span>
+                </div>
+                <div class="recipe-ingredients">
+                    <strong>Ingredients:</strong> ${(recipe.ingredients || []).slice(0, 3).join(', ')}${(recipe.ingredients || []).length > 3 ? '…' : ''}
+                </div>
+                <div class="recipe-owner">
+                    <p>Made by: ${recipe.ownerName || recipe.ownerId}</p>
+                </div>
+                <div class="recipe-actions">
+                    ${buttons}
+                </div>
+            </div>
+        </div>`;
+    }).join('');
 }
+
 
 function filterRecipes() {
     const typeFilter = document.getElementById('typeFilter').value;
@@ -75,15 +112,31 @@ function filterRecipes() {
     renderRecipes(filtered);
 }
 
-function toggleCollection(recipeId) {
-    if (userCollection.has(recipeId)) {
-        userCollection.delete(recipeId);
-        console.log(`Recipe ${recipeId} removed from collection`);
+async function toggleCollection(recipeId) {
+    const alreadySaved = userCollection.has(recipeId);
+    const endpoint = alreadySaved ? "remove_recipe" : "save_recipe";
+
+    const res = await fetch(`http://localhost:8080/${endpoint}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ recipeId }),
+        credentials: "include"
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+        if (alreadySaved) {
+            userCollection.delete(recipeId);
+            console.log(`Recipe ${recipeId} removed from collection`);
+        } else {
+            userCollection.add(recipeId);
+            console.log(`Recipe ${recipeId} added to collection`);
+        }
+        filterRecipes();
     } else {
-        userCollection.add(recipeId);
-        console.log(`Recipe ${recipeId} added to collection`);
+        alert("Error: " + data.message);
     }
-    filterRecipes();
 }
 
 function clearFilters() {
@@ -99,4 +152,9 @@ document.getElementById('ingredientFilter').addEventListener('input', filterReci
 document.getElementById('timeFilter').addEventListener('input', filterRecipes);
 
 // Initial load from DB
-loadRecipes();
+async function loader() {
+    await checkLogin(); 
+    await loadRecipes();
+}
+
+loader();

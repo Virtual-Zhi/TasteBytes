@@ -26,9 +26,10 @@ async function handleProfile(req, res, sessions) {
                 email: user.email,
                 phone: user.phone || "Not provided",
                 plan: user.plan || "Free",
-                savedRecipes: user.savedRecipes,
+                savedRecipes: (user.savedRecipes || []).map(id => id.toString()),
                 posts: user.posts,
             };
+
 
             res.end(JSON.stringify({ message: "Profile data", user: profileData }));
         } catch (err) {

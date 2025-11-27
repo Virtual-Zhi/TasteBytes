@@ -65,6 +65,59 @@ async function handleRecipes(req, res, sessions) {
         return true;
     }
 
+    if (req.method === "POST" && req.url === "/save_recipe") {
+        const cookies = parseCookies(req.headers.cookie);
+        const sessionId = cookies.sessionId;
+        const session = sessions[sessionId];
+
+        if (!session) {
+            res.statusCode = 401;
+            return res.end(JSON.stringify({ message: "Not logged in" }));
+        }
+
+        let body = "";
+        req.on("data", chunk => body += chunk);
+        req.on("end", async () => {
+            const { recipeId } = JSON.parse(body);
+            const db = getDB();
+
+            await db.collection("users").updateOne(
+                { _id: new ObjectId(session.id) },
+                { $addToSet: { savedRecipes: new ObjectId(recipeId) } }
+            );
+
+            res.end(JSON.stringify({ message: "Recipe saved!" }));
+        });
+        return true;
+    }
+
+
+    if (req.method === "POST" && req.url === "/remove_recipe") {
+        const cookies = parseCookies(req.headers.cookie);
+        const sessionId = cookies.sessionId;
+        const session = sessions[sessionId];
+
+        if (!session) {
+            res.statusCode = 401;
+            return res.end(JSON.stringify({ message: "Not logged in" }));
+        }
+
+        let body = "";
+        req.on("data", chunk => body += chunk);
+        req.on("end", async () => {
+            const { recipeId } = JSON.parse(body);
+            const db = getDB();
+
+            await db.collection("users").updateOne(
+                { _id: new ObjectId(session.id) },
+                { $pull: { savedRecipes: new ObjectId(recipeId) } }
+            );
+
+            res.end(JSON.stringify({ message: "Recipe removed!" }));
+        });
+        return true;
+    }
+
     if (req.method === "GET" && req.url === "/recipes") {
         try {
             const recipes = await db.collection("recipes").find().toArray();
@@ -91,8 +144,7 @@ async function handleRecipes(req, res, sessions) {
         }
         return true;
     }
-
-
+    
     return false;
 }
 
