@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TasteBytes - Login</title>
+    <meta name="description" content="">
+    <link rel="stylesheet" href="../cssStyles/contactPage.css">
+</head>
+
+<body>
+    <div class="contact">
+        <h1 id="formTitle">Contact Us</h1>
+        <h2 id="formTitle">We would love to hear from you! Please reach out below with any questions, comments, or concerns.</h2>
+        <!-- Login Form -->
+        <form id="loginForm" class="form active">
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input type="text" id="email" placeholder="Enter your Email" required>
+            </div>
+            <div class="input-group">
+                <label for="name">First and Last Name</label>
+                <input type="name" id="name" placeholder="Enter your first and last name" required>
+            </div>
+            <div class="input-group">
+                <label for="number">Phone Number</label>
+                <input type="number" id="number" placeholder="Enter your phone number" required>
+            </div>
+            <div class="input-group">
+                <label for="message">Your Message</label>
+                <input type="message" id="message" placeholder="Enter your message" required>
+            </div>
+            <button type="submit">Send Message</button>
+        </form>
+        <p id="successMessage" style="display: none;  color: #333; font-weight: bold; font-size: 30px;"> 
+            Thank you, message sent! We will contact you within the next business day. 
+        </p>
+    </div>
+
+    <script src="../jsScripts/contactPage.js"></script>
+</body>
+
+</html>
