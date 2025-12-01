@@ -8,12 +8,31 @@
     <title>TasteBytes - Login</title>
     <meta name="description" content="">
     <link rel="stylesheet" href="../cssStyles/contactPage.css">
+    <link rel="stylesheet" href="../cssStyles/menuStyles.css">
 </head>
 
 <body>
+
+    <nav class="navbar">
+        <a href="../index.html" class="logo">TasteBytes</a>
+        <div class="nav-links" id="navLinks">
+            <a href="about.html">About</a>
+            <a href="recipes.html">Recipes</a>
+            <a href="categories.html">Challenges</a>
+            <a href="contact.html">Contact</a>
+            <a href="login.html" class="signin-btn">Sign In</a>
+        </div>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
     <div class="contact">
         <h1 id="formTitle">Contact Us</h1>
-        <h2 id="formTitle">We would love to hear from you! Please reach out below with any questions, comments, or concerns.</h2>
+        <h2 id="formTitle">We would love to hear from you! Please reach out below with any questions, comments, or
+            concerns.</h2>
         <!-- Login Form -->
         <form id="loginForm" class="form active">
             <div class="input-group">
@@ -34,12 +53,13 @@
             </div>
             <button type="submit">Send Message</button>
         </form>
-        <p id="successMessage" style="display: none;  color: #333; font-weight: bold; font-size: 30px;"> 
-            Thank you, message sent! We will contact you within the next business day. 
+        <p id="successMessage" style="display: none;  color: #333; font-weight: bold; font-size: 30px;">
+            Thank you, message sent! We will contact you within the next business day.
         </p>
     </div>
 
     <script src="../jsScripts/contactPage.js"></script>
+    <script src="../jsScripts/menuJS.js"></script>
 </body>
 
 </html>
