@@ -32,7 +32,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
         if (res.ok) {
             alert("Welcome " + data.username + "!");
-            window.location.href = "../index.html";
+            window.history.back();
         } else {
             alert("Login failed: " + data.message);
         }

@@ -40,6 +40,70 @@ window.addEventListener("scroll", function () {
 });
 
 
+window.onload = async () => {
+    const navLinks = document.getElementById("navLinks");
+    const signinBtn = document.querySelector(".signin-btn");
+
+    try {
+        const res = await fetch("http://localhost:8080/profile", {
+            method: "GET",
+            credentials: "include"
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+
+
+            navLinks.removeChild(signinBtn);
+
+            const profileMenu = document.createElement("div");
+            profileMenu.classList.add("dropdown");
+
+            // figure out how deep we are in the folder structure
+            const path = window.location.pathname;
+            const prefix = path.includes("/pages/") ? "../" : "./";
+
+            profileMenu.innerHTML = `
+                <button class="dropbtn">${data.user.username} ▼</button>
+                <div class="dropdown-content">
+                    <a href="${prefix}pages/my_account.html">Profile</a>
+                    <a href="#" id="logoutBtn">Logout</a>
+                </div>
+            `;
+
+            navLinks.appendChild(profileMenu);
+
+
+            document.getElementById("logoutBtn").addEventListener("click", async (e) => {
+                e.preventDefault();
+                await fetch("http://localhost:8080/logout", {
+                    method: "POST",
+                    credentials: "include"
+                });
+                alert("Logged out!");
+                if (location.pathname.endsWith("my_account.html")) {
+                    location = "../index.html";
+                } else {
+                    location.reload();
+                }
+            });
+        } else {
+
+            signinBtn.textContent = "Sign In";
+
+            if (location.pathname.endsWith("index.html")) {
+                signinBtn.href = "./pages/login.html";
+            } else {
+                signinBtn.href = "login.html";
+            }
+        }
+    } catch (err) {
+        console.error("Error checking login:", err);
+    }
+}
+
+
+
 function showNotification(message, duration = 3000) {
     const notification = document.getElementById('notification');
     notification.textContent = message;
@@ -98,58 +162,3 @@ document.getElementById('privacyLink').addEventListener('click', (e) => {
     showModal('Privacy Policy', privacyContent);
     showNotification('Opened Privacy Policy');
 });
-
-
-window.onload = async () => {
-    const navLinks = document.getElementById("navLinks");
-    const signinBtn = document.querySelector(".signin-btn");
-
-    try {
-        const res = await fetch("http://localhost:8080/profile", {
-            method: "GET",
-            credentials: "include"
-        });
-
-        if (res.ok) {
-            const data = await res.json();
-
-
-            navLinks.removeChild(signinBtn);
-
-            const profileMenu = document.createElement("div");
-            profileMenu.classList.add("dropdown");
-
-            // figure out how deep we are in the folder structure
-            const path = window.location.pathname;
-            const prefix = path.includes("/pages/") ? "../" : "./";
-
-            profileMenu.innerHTML = `
-                <button class="dropbtn">${data.user.username} ▼</button>
-                <div class="dropdown-content">
-                    <a href="${prefix}pages/my_account.html">Profile</a>
-                    <a href="${prefix}htmlPages/saved.html">Saved Recipes</a>
-                    <a href="#" id="logoutBtn">Logout</a>
-                </div>
-            `;
-
-            navLinks.appendChild(profileMenu);
-
-
-            document.getElementById("logoutBtn").addEventListener("click", async (e) => {
-                e.preventDefault();
-                await fetch("http://localhost:8080/logout", {
-                    method: "POST",
-                    credentials: "include"
-                });
-                alert("Logged out!");
-                location.reload();
-            });
-        } else {
-
-            signinBtn.textContent = "Sign In";
-            signinBtn.href = "./pages/login.html";
-        }
-    } catch (err) {
-        console.error("Error checking login:", err);
-    }
-}

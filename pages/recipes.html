@@ -6,22 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recipe Manager</title>
     <link rel="stylesheet" href="../cssStyles/recipesPage.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
-        }
-
-        .recipe-content {
-            padding: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="../cssStyles/components/recipeCard.css">
+    <link rel="stylesheet" href="../cssStyles/menuStyles.css">
 </head>
 
 <body>
@@ -75,174 +61,55 @@
         <div class="recipes-grid" id="recipesGrid"></div>
     </div>
 
-    <script>
-        // Sample recipe data (this will eventually come from your SQL database)
-        const recipes = [
-            {
-                id: 1,
-                name: "Classic Pancakes",
-                type: "Breakfast",
-                cookTime: 20,
-                ingredients: ["flour", "eggs", "milk", "butter", "sugar"],
-                icon: "🥞"
-            },
-            {
-                id: 2,
-                name: "Spaghetti Carbonara",
-                type: "Dinner",
-                cookTime: 25,
-                ingredients: ["pasta", "eggs", "bacon", "parmesan", "pepper"],
-                icon: "🍝"
-            },
-            {
-                id: 3,
-                name: "Chocolate Chip Cookies",
-                type: "Dessert",
-                cookTime: 35,
-                ingredients: ["flour", "butter", "sugar", "chocolate chips", "eggs"],
-                icon: "🍪"
-            },
-            {
-                id: 4,
-                name: "Caesar Salad",
-                type: "Lunch",
-                cookTime: 15,
-                ingredients: ["lettuce", "croutons", "parmesan", "caesar dressing", "chicken"],
-                icon: "🥗"
-            },
-            {
-                id: 5,
-                name: "Grilled Cheese Sandwich",
-                type: "Lunch",
-                cookTime: 10,
-                ingredients: ["bread", "cheese", "butter"],
-                icon: "🥪"
-            },
-            {
-                id: 6,
-                name: "Beef Tacos",
-                type: "Dinner",
-                cookTime: 30,
-                ingredients: ["ground beef", "tortillas", "cheese", "lettuce", "tomatoes", "sour cream"],
-                icon: "🌮"
-            },
-            {
-                id: 7,
-                name: "Fruit Smoothie",
-                type: "Breakfast",
-                cookTime: 5,
-                ingredients: ["banana", "strawberries", "yogurt", "milk", "honey"],
-                icon: "🥤"
-            },
-            {
-                id: 8,
-                name: "Chocolate Brownies",
-                type: "Dessert",
-                cookTime: 40,
-                ingredients: ["chocolate", "butter", "sugar", "eggs", "flour"],
-                icon: "🍫"
-            },
-            {
-                id: 9,
-                name: "Chicken Stir Fry",
-                type: "Dinner",
-                cookTime: 20,
-                ingredients: ["chicken", "vegetables", "soy sauce", "rice", "garlic", "ginger"],
-                icon: "🍜"
-            },
-            {
-                id: 10,
-                name: "Veggie Wrap",
-                type: "Snack",
-                cookTime: 10,
-                ingredients: ["tortilla", "lettuce", "tomatoes", "cucumber", "hummus"],
-                icon: "🌯"
-            }
-        ];
 
-        // Store user's collection (in a real app, this would be saved to the database)
-        let userCollection = new Set();
+    <footer class="footer">
+        <div class="footer-container">
 
-        // Function to render recipes
-        function renderRecipes(recipesToShow) {
-            const grid = document.getElementById('recipesGrid');
+            <div class="footer-column">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="./htmlPages/recipes.html">Recipes</a></li>
+                    <li><a href="./htmlPages/categories.html">Categories</a></li>
+                    <li><a href="./htmlPages/tips.html">Cooking Tips</a></li>
+                </ul>
+            </div>
 
-            if (recipesToShow.length === 0) {
-                grid.innerHTML = '<div class="no-results">No recipes found matching your filters.</div>';
-                return;
-            }
+            <div class="footer-column">
+                <h4>TasteBuds</h4>
+                <ul>
+                    <li><a href="#" id="termsLink">Terms & Conditions</a></li>
+                    <li><a href="#" id="privacyLink">Privacy Policy</a></li>
+                </ul>
+            </div>
 
-            grid.innerHTML = recipesToShow.map(recipe => `
-                <div class="recipe-card">
-                    <div class="recipe-image">${recipe.icon}</div>
-                    <div class="recipe-content">
-                        <h2 class="recipe-title">${recipe.name}</h2>
-                        <span class="recipe-type">${recipe.type}</span>
-                        <div class="recipe-meta">
-                            <span>⏱️ ${recipe.cookTime} min</span>
-                            <span>🥘 ${recipe.ingredients.length} ingredients</span>
-                        </div>
-                        <div class="recipe-ingredients">
-                            <strong>Ingredients:</strong> ${recipe.ingredients.join(', ')}
-                        </div>
-                        <button 
-                            class="add-to-collection-btn ${userCollection.has(recipe.id) ? 'added' : ''}" 
-                            onclick="toggleCollection(${recipe.id})"
-                        >
-                            ${userCollection.has(recipe.id) ? '✓ In Collection' : '+ Add to Collection'}
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
+            <div class="footer-column">
+                <h4>Subscribe To Our Newsletter</h4>
+                <form class="subscribe-form" id="subscribe-form">
+                    <input type="email" id="subscribeEmail" placeholder="Enter email address" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
 
-        // Function to filter recipes
-        function filterRecipes() {
-            const typeFilter = document.getElementById('typeFilter').value;
-            const ingredientFilter = document.getElementById('ingredientFilter').value.toLowerCase();
-            const timeFilter = document.getElementById('timeFilter').value;
+        <div class="footer-bottom">
+            <p>&copy; 2025 TasteBuds. All rights reserved.</p>
+        </div>
+    </footer>
 
-            let filtered = recipes.filter(recipe => {
-                const matchesType = !typeFilter || recipe.type === typeFilter;
-                const matchesIngredient = !ingredientFilter ||
-                    recipe.ingredients.some(ing => ing.toLowerCase().includes(ingredientFilter));
-                const matchesTime = !timeFilter || recipe.cookTime <= parseInt(timeFilter);
+    <!-- Popup -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Recipe Details</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <p id="modalMessage"></p>
+        </div>
+    </div>
+    <div id="notification" class="notification"></div>
 
-                return matchesType && matchesIngredient && matchesTime;
-            });
-
-            renderRecipes(filtered);
-        }
-
-        // Function to toggle recipe in collection
-        function toggleCollection(recipeId) {
-            if (userCollection.has(recipeId)) {
-                userCollection.delete(recipeId);
-                console.log(`Recipe ${recipeId} removed from collection`);
-            } else {
-                userCollection.add(recipeId);
-                console.log(`Recipe ${recipeId} added to collection`);
-            }
-
-            // Re-render to update button states
-            filterRecipes();
-        }
-
-        // Function to clear all filters
-        function clearFilters() {
-            document.getElementById('typeFilter').value = '';
-            document.getElementById('ingredientFilter').value = '';
-            document.getElementById('timeFilter').value = '';
-            filterRecipes();
-        }
-
-        // Add event listeners to filters
-        document.getElementById('typeFilter').addEventListener('change', filterRecipes);
-        document.getElementById('ingredientFilter').addEventListener('input', filterRecipes);
-        document.getElementById('timeFilter').addEventListener('input', filterRecipes);
-
-        // Initial render
-        renderRecipes(recipes);
+    <script src="../jsScripts/menuJS.js"></script>
+    <script src="../jsScripts/recipePage.js"></script>
     </script>
 </body>
 

@@ -16,7 +16,7 @@ section {
 }
 
 h1 {
-    color: #fff;
+    color: #000000;
     margin-bottom: 1rem;
     font-size: 3rem;
 }
@@ -29,7 +29,7 @@ h2 {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 60px;
 }
 
 .filters {
@@ -70,100 +70,6 @@ h2 {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
-}
-
-.recipe-card {
-    background: white;
-    padding: 1rem;
-    margin: 1rem 0;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.recipe-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.recipe-card h3 {
-    margin-top: 0;
-    color: #333;
-}
-
-.recipe-image {
-    width: 100%;
-    height: 200px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 48px;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-}
-
-.recipe-title {
-    font-size: 20px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 10px;
-}
-
-.recipe-meta {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 10px;
-    font-size: 14px;
-    color: #666;
-}
-
-.recipe-meta span {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.recipe-type {
-    display: inline-block;
-    padding: 4px 12px;
-    background-color: #e3f2fd;
-    color: #0072ff;
-    border-radius: 12px;
-    font-size: 12px;
-    margin-bottom: 10px;
-}
-
-.recipe-ingredients {
-    font-size: 13px;
-    color: #666;
-    margin-bottom: 15px;
-    line-height: 1.5;
-}
-
-.recipe-card button {
-    background: #ee5a24;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.3s;
-    width: 100%;
-    font-weight: 600;
-}
-
-.recipe-card button:hover {
-    background: #d63d0f;
-}
-
-.recipe-card button.added {
-    background: #ff9800;
-}
-
-.recipe-card button.added:hover {
-    background: #e68900;
 }
 
 .clear-filters-btn {
