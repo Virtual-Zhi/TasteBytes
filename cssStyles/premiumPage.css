@@ -1,0 +1,53 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #ff914d, #ff4d6d);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.model {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    width: 300px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.price {
+    display: flex; 
+    gap: 2rem; 
+    justify-content: center; 
+    align-items: stretch; 
+}
+
+/* Title */
+.model h1 {
+    margin-bottom: 1.5rem;
+    color: #ff4d6d;
+    font-size: 1.8rem;
+}
+
+/* Buttons */
+button {
+    width: 100%;
+    padding: 0.8rem;
+    background: #ff4d6d;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    background: #d7263d;
+    transform: scale(1.03);
+}
