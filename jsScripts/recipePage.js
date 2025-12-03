@@ -146,6 +146,10 @@ function clearFilters() {
     filterRecipes();
 }
 
+function viewRecipe(recipeId) {
+    window.location.href = `recipe-detail.html?id=${recipeId}`;
+}
+
 // Event listeners
 document.getElementById('typeFilter').addEventListener('change', filterRecipes);
 document.getElementById('ingredientFilter').addEventListener('input', filterRecipes);
