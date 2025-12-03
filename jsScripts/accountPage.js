@@ -11,7 +11,6 @@ async function loadAccount() {
         profileData = data.user;
         console.log("Profile:", profileData);
 
-        // Update UI with user info
         document.querySelector(".profile-banner h2").textContent = profileData.username;
         document.querySelector(".profile-banner p").textContent = `@${profileData.username}`;
         document.querySelectorAll(".stat-card .number")[0].textContent = profileData.savedRecipes.length;
@@ -47,6 +46,7 @@ function showDashboard(dashboard, dynamic) {
 async function submitRecipe() {
     const form = document.getElementById('recipeForm');
     if (!form) return;
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const recipe = {
@@ -73,14 +73,18 @@ async function submitRecipe() {
             if (res.ok) {
                 alert('Recipe posted successfully!');
                 form.reset();
-            } else {
-                alert(data.message || 'Error uploading recipe');
+                if (data.recipe) {
+                    allRecipes.push(data.recipe);
+                    profileData.posts.push(data.recipe._id);
+                }
+                renderMyPosts();
             }
         } catch (err) {
             alert('Network error while uploading recipe');
         }
     });
 }
+
 
 function renderMyPosts() {
     const postsContainer = document.getElementById("myPostsList");
@@ -96,17 +100,17 @@ function renderMyPosts() {
                     <h2 class="recipe-title">${recipe.title}</h2>
                     <span class="recipe-type">${recipe.type || ''}</span>
                     <div class="recipe-meta">
-                        <span>⏱️ ${recipe.prepTime || 0} min</span>
-                        <span>⭐ ${recipe.rating?.average || 0}/5 (${recipe.rating?.count || 0} ratings)</span>
+                        <span>${recipe.prepTime || 0} min</span>
+                        <span>${recipe.rating?.average || 0}/5 (${recipe.rating?.count || 0} ratings)</span>
                     </div>
                     <div class="recipe-ingredients">
                         <strong>Ingredients:</strong> ${(recipe.ingredients || []).slice(0, 3).join(', ')}${(recipe.ingredients || []).length > 3 ? '…' : ''}
                     </div>
                     <div class="recipe-owner">
-                        <p>Made by: ${recipe.ownerName || recipe.ownerId}</p>
+                        <p>Made by: ${profileData.username}</p>
                     </div>
                     <div class="recipe-actions">
-                        <button class="view-recipe-btn" onclick="viewRecipe('${recipe._id}')">👀 View Recipe</button>
+                        <button class="view-recipe-btn" onclick="viewRecipe('${recipe._id}')">View Recipe</button>
                     </div>
                 </div>
             </div>
@@ -129,8 +133,8 @@ function renderSavedRecipes() {
                     <h2 class="recipe-title">${recipe.title}</h2>
                     <span class="recipe-type">${recipe.type || ''}</span>
                     <div class="recipe-meta">
-                        <span>⏱️ ${recipe.prepTime || 0} min</span>
-                        <span>⭐ ${recipe.rating?.average || 0}/5 (${recipe.rating?.count || 0} ratings)</span>
+                        <span>⏱${recipe.prepTime || 0} min</span>
+                        <span>${recipe.rating?.average || 0}/5 (${recipe.rating?.count || 0} ratings)</span>
                     </div>
                     <div class="recipe-ingredients">
                         <strong>Ingredients:</strong> ${(recipe.ingredients || []).slice(0, 3).join(', ')}${(recipe.ingredients || []).length > 3 ? '…' : ''}
@@ -139,7 +143,7 @@ function renderSavedRecipes() {
                         <p>Made by: ${recipe.ownerName || recipe.ownerId}</p>
                     </div>
                     <div class="recipe-actions">
-                        <button class="view-recipe-btn" onclick="viewRecipe('${recipe._id}')">👀 View Recipe</button>
+                        <button class="view-recipe-btn" onclick="viewRecipe('${recipe._id}')">View Recipe</button>
                     </div>
                 </div>
             </div>
@@ -152,7 +156,6 @@ async function showMyRecipes(dashboard, dynamic, path) {
     dynamic.style.display = "block";
     try {
         const res = await fetch(path);
-        if (!res.ok) throw new Error("Failed to load component");
         dynamic.innerHTML = await res.text();
 
         dynamic.querySelectorAll('.tab').forEach(tab => {
@@ -166,7 +169,6 @@ async function showMyRecipes(dashboard, dynamic, path) {
 
         renderMyPosts();
         renderSavedRecipes();
-
         submitRecipe();
     } catch (err) {
         console.error("Error loading My Recipes:", err);

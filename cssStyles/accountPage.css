@@ -30,6 +30,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 0.9rem;
+    margin-top: 75px;
 }
 
 .nav-item {
@@ -172,7 +173,7 @@ body {
         background: #ff4d6d;
         justify-content: space-around;
         padding: 12px 0;
-        box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
+        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
         z-index: 1000;
     }
 
@@ -186,7 +187,7 @@ body {
     }
 
     .bottom-nav a:hover {
-        background: rgba(255,255,255,0.2);
+        background: rgba(255, 255, 255, 0.2);
         border-radius: 6px;
         padding: 6px;
     }
