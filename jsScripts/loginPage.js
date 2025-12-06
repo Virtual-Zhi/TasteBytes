@@ -83,3 +83,40 @@ document.getElementById("createForm").addEventListener("submit", async (e) => {
     }
 });
 
+
+
+// Initialize popup client
+const client = google.accounts.oauth2.initCodeClient({
+  client_id: "261255118602-r5igalkpb2q6oe2jo5lp1td3uas6v11r.apps.googleusercontent.com",
+  scope: "email profile",
+  ux_mode: "popup",
+  callback: async (response) => {
+    try {
+      const res = await fetch("http://localhost:8080/google_login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: response.code }), // send code to backend
+        credentials: "include",
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert("Welcome " + data.username + "!");
+        window.history.back();
+      } else {
+        alert("Google login failed: " + data.message);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Network error during Google login.");
+    }
+  }
+});
+
+// Attach to your Google login button
+document.querySelectorAll(".google-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    client.requestCode(); // opens Google popup
+  });
+});

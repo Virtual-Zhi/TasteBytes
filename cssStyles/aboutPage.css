@@ -1,11 +1,12 @@
-/* Mission Banner */
+
 .mission-banner {
-    background: url('../images/about-mission-banner.jpg');
-    background-repeat: no-repeat;
+    background-image: url("../images/about-mission-banner.jpg");
     background-size: cover;
-    background-position: 0 -250px;
+    background-position: center center;
+    background-repeat: no-repeat;
+
     position: relative;
-    padding: 14rem 2rem;
+    padding: 12rem 2rem;
     text-align: center;
     color: white;
 }
@@ -14,189 +15,254 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    padding: 12rem 2rem;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 0;
 }
 
 .mission-text {
     position: relative;
+    z-index: 1;
     max-width: 800px;
     margin: 0 auto;
 }
 
 .mission-text h1 {
-    font-size: 48px;
-    margin-bottom: 20px;
+    font-size: 3.2rem;
+    font-weight: bold;
+    margin-bottom: 1.2rem;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
 
 .mission-text p {
-    font-size: 20px;
-    line-height: 1.6;
+    font-size: 1.25rem;
+    line-height: 1.7;
+    color: #f9f9f9;
+    text-shadow: 0 1px 5px rgba(0,0,0,0.4);
 }
 
-@media (max-width: 1800px) {
+@media (max-width: 900px) {
     .mission-banner {
-        padding: 12rem 2rem;
-        background-position: center -200px;
+        padding: 8rem 1.5rem;
+    }
+    .mission-text h1 {
+        font-size: 2.4rem;
+    }
+    .mission-text p {
+        font-size: 1.05rem;
     }
 }
 
-@media (max-width: 1500px) {
-    .mission-banner {
-        padding: 8rem 2rem;
-        background-position: center -200px;
-    }
-}
-
-@media (max-width: 1200px) {
-    .mission-banner {
-        padding: 8rem 2rem;
-        background-position: center -50px;
-    }
-}
-
-@media (max-width: 1000px) {
-    .mission-banner {
-        padding: 8rem 2rem;
-        background-position: center 0px;
-    }
-}
-
-/* Core Values */
 .core-values {
-    background: #f7f9fc;
-    color: #0072ff;
+    background: #fff8f6;
+    padding: 3rem 2rem;
     text-align: center;
-    padding: 60px 20px;
 }
 
 .core-values h2 {
-    font-size: 36px;
-    margin-bottom: 30px;
+    font-size: 2.4rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #ff4d6d;
+}
+
+.core-values p {
+    max-width: 700px;
+    margin: 0.5rem auto 2rem;
+    font-size: 1.1rem;
+    color: #444;
+    line-height: 1.6;
 }
 
 .core-values ul {
     list-style: none;
     padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 20px;
-    max-width: 900px;
     margin: 0 auto;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1.2rem;
+
+    max-width: 1200px; /* slightly narrower, prevents overflow */
 }
 
 .core-values li {
-    background: white;
-    text-align: center;
+    background: #fff;
+    padding: 1.7rem 1rem;
     border-radius: 10px;
-    padding: 20px;
-    font-size: 15px;
     font-weight: bold;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
+    font-size: 1rem;
+
+    color: #ff4d6d;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+
+    transition: transform 0.25s ease;
 }
 
 .core-values li:hover {
-    transform: translateY(-5px);
+    transform: translateY(-6px);
 }
 
 .diversity-stats {
-    padding: 50px 20px;
+    padding: 3rem 2rem;
     text-align: center;
-    background-color: #ffffffee;
+    background: #ffffff;
 }
 
 .diversity-stats h3 {
-    font-size: 30px;
-    color: #0072ff;
-    margin-bottom: 40px;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+    color: #ff4d6d;
 }
 
 .stats-grid {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 .stats-card {
-    background: linear-gradient(to right, #00c6ff, #0072ff);
+    background: linear-gradient(to right, #ff914d, #ff4d6d);
     color: white;
-    border-radius: 16px;
-    padding: 25px 30px;
-    width: 260px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+    padding: 2rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+
+    text-align: center;
 }
 
 .stats-card h4 {
-    font-size: 40px;
-    margin-bottom: 15px;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 0.8rem;
 }
 
 .stats-card p {
-    font-size: 18px;
-    line-height: 1.4;
+    font-size: 1.1rem;
+    opacity: 0.95;
 }
 
-
 .join-us {
+    padding: 3.5rem 2rem;
     text-align: center;
-    padding: 60px 20px;
-    background: linear-gradient(to right, #00c6ff, #0072ff);
+
+    background: linear-gradient(to right, #ff914d, #ff4d6d);
     color: white;
 }
 
 .join-us h2 {
-    font-size: 36px;
-    margin-bottom: 20px;
+    font-size: 2.4rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
 }
 
 .join-us p {
-    font-size: 18px;
-    max-width: 800px;
-    margin: 0 auto 30px;
-    line-height: 1.6;
+    font-size: 1.15rem;
+    max-width: 750px;
+    margin: 0 auto 2rem;
+    line-height: 1.7;
 }
 
 .cta-btn {
     display: inline-block;
-    margin: 10px;
-    padding: 12px 24px;
-    background: white;
-    color: #0072ff;
+    padding: 0.8rem 1.5rem;
+    background: #fff;
+    color: #ff4d6d;
     border-radius: 6px;
-    font-weight: bold;
     text-decoration: none;
-    transition: background 0.3s;
+    font-weight: bold;
+    margin: 0 0.5rem;
+    transition: all 0.3s ease;
 }
 
 .cta-btn:hover {
-    background: #f0f0f0;
+    background: #ffe6e9;
+    transform: translateY(-3px);
 }
 
-@media(max-width: 768px) {
-    h1 {
-        font-size: 36px;
+@media (max-width: 850px) {
+    .stats-card {
+        padding: 1.8rem 1rem;
+    }
+    .core-values ul {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+@media (max-width: 360px) {
+
+    .mission-banner {
+        padding: 6rem 1rem;
     }
 
-    .mission-text h2 {
-        font-size: 28px;
+    .mission-text h1 {
+        font-size: 1.9rem;
     }
 
     .mission-text p {
-        font-size: 18px;
+        font-size: 0.95rem;
+        line-height: 1.5;
     }
 
     .core-values h2 {
-        font-size: 28px;
+        font-size: 1.8rem;
     }
 
-    .diversity-banner h2 {
-        font-size: 28px;
+    .core-values p {
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .core-values ul {
+        grid-template-columns: 1fr;
+        gap: 0.9rem;
+    }
+
+    .core-values li {
+        padding: 1.2rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .diversity-stats h3 {
+        font-size: 1.6rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
     }
 
     .stats-card {
-        width: 80%;
-        max-width: 300px;
+        padding: 1.5rem 1rem;
+    }
+
+    .stats-card h4 {
+        font-size: 2rem;
+    }
+
+    .stats-card p {
+        font-size: 0.95rem;
+    }
+
+    .join-us h2 {
+        font-size: 1.8rem;
+    }
+
+    .join-us p {
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .cta-btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+        margin: 0.4rem 0;
+        display: block;
+        width: 100%;    
+        max-width: 240px;
+        margin-left: auto;
+        margin-right: auto;
     }
 }
