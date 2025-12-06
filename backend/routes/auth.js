@@ -1,5 +1,13 @@
 const { ObjectId } = require("mongodb");
 const { getDB } = require("../utils/db");
+const { OAuth2Client } = require("google-auth-library");
+
+// I know this is not secure, but this is just for our class purposes
+const client = new OAuth2Client(
+  "261255118602-r5igalkpb2q6oe2jo5lp1td3uas6v11r.apps.googleusercontent.com",
+  "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"
+);
+ 
 
 
 async function handleAuth(req, res, sessions) {
@@ -65,6 +73,58 @@ async function handleAuth(req, res, sessions) {
                 console.error("Login error:", err);
                 res.statusCode = 500;
                 res.end(JSON.stringify({ message: "Server error", error: err.message }));
+            }
+        });
+        return true;
+    }
+
+    if (req.method === "POST" && req.url === "/google_login") {
+        let body = "";
+        req.on("data", chunk => body += chunk);
+        req.on("end", async () => {
+            try {
+            const { code } = JSON.parse(body);
+
+            // Exchange code for tokens
+            const { tokens } = await client.getToken({ code, redirect_uri: "postmessage", });
+
+            // Verify ID token
+            const ticket = await client.verifyIdToken({
+                idToken: tokens.id_token,
+                audience: "261255118602-r5igalkpb2q6oe2jo5lp1td3uas6v11r.apps.googleusercontent.com",
+            });
+
+            const payload = ticket.getPayload();
+            const email = payload.email;
+            const name = payload.name;
+
+            // Check if user exists
+            let user = await db.collection("users").findOne({ email });
+            if (!user) {
+                const result = await db.collection("users").insertOne({
+                username: name,
+                email: email,
+                phone: null,
+                plan: "Free",
+                password: null,
+                posts: [],
+                savedRecipes: [],
+                createdAt: new Date(),
+                lastLogin: new Date(),
+                });
+                user = await db.collection("users").findOne({ _id: result.insertedId });
+            }
+
+            // Create session
+            const sessionId = user._id.toString();
+            sessions[sessionId] = { id: user._id.toString(), username: user.username };
+
+            res.setHeader("Set-Cookie", `sessionId=${sessionId}; HttpOnly; Path=/`);
+            res.end(JSON.stringify({ message: "Google login successful!", username: user.username }));
+            } catch (err) {
+            console.error("Google login error:", err);
+            res.statusCode = 400;
+            res.end(JSON.stringify({ message: "Google login failed", error: err.message }));
             }
         });
         return true;
