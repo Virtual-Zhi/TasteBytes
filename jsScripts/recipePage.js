@@ -54,45 +54,60 @@ function renderRecipes(recipesToShow) {
     }
 
     grid.innerHTML = recipesToShow.map(recipe => {
+        const imgSrc = recipe.imageUrl || '../images/homePage.jpg';
         let buttons = `
-            <button class="view-recipe-btn" onclick="viewRecipe('${recipe._id}')">
-                👀 View Recipe
-            </button>
-        `;
+      <button class="view-recipe-btn" onclick="viewRecipe('${recipe._id}')">
+        👀 View Recipe
+      </button>
+    `;
 
         if (isLoggedIn) {
             buttons += `
-                <button 
-                    class="add-to-collection-btn ${userCollection.has(recipe._id) ? 'added' : ''}" 
-                    onclick="toggleCollection('${recipe._id}')">
-                    ${userCollection.has(recipe._id) ? '✓ In Collection' : '+ Add to Collection'}
-                </button>
-            `;
+        <button 
+          class="add-to-collection-btn ${userCollection.has(recipe._id) ? 'added' : ''}" 
+          onclick="toggleCollection('${recipe._id}')">
+          ${userCollection.has(recipe._id) ? '✓ In Collection' : '+ Add to Collection'}
+        </button>
+      `;
         }
 
         return `
-        <div class="recipe-card">
-            <div class="recipe-image">🍴</div>
-            <div class="recipe-content">
-                <h2 class="recipe-title">${recipe.title}</h2>
-                <span class="recipe-type">${recipe.type || ''}</span>
-                <div class="recipe-meta">
-                    <span>⏱️ ${recipe.prepTime || 0} min</span>
-                    <span>⭐ ${recipe.rating?.average || 0}/5 (${recipe.rating?.count || 0} ratings)</span>
-                </div>
-                <div class="recipe-ingredients">
-                    <strong>Ingredients:</strong> ${(recipe.ingredients || []).slice(0, 3).join(', ')}${(recipe.ingredients || []).length > 3 ? '…' : ''}
-                </div>
-                <div class="recipe-owner">
-                    <p>Made by: ${recipe.ownerName || recipe.ownerId}</p>
-                </div>
-                <div class="recipe-actions">
-                    ${buttons}
-                </div>
-            </div>
-        </div>`;
+      <div class="recipe-card">
+        <div class="recipe-image">
+          <img src="${imgSrc}" alt="${escapeHtml(recipe.title || 'Recipe image')}" loading="lazy" />
+        </div>
+        <div class="recipe-content">
+          <h2 class="recipe-title">${escapeHtml(recipe.title)}</h2>
+          <span class="recipe-type">${escapeHtml(recipe.type || '')}</span>
+          <div class="recipe-meta">
+            <span>${escapeHtml(String(recipe.prepTime || 0))} min</span>
+            <span>${escapeHtml(String(recipe.rating?.average || 0))}/5 (${escapeHtml(String(recipe.rating?.count || 0))} ratings)</span>
+          </div>
+          <div class="recipe-ingredients">
+            <strong>Ingredients:</strong> ${escapeHtml((recipe.ingredients || []).slice(0, 3).join(', '))}${(recipe.ingredients || []).length > 3 ? '…' : ''}
+          </div>
+          <div class="recipe-owner">
+            <p>Made by: ${escapeHtml(recipe.ownerName || recipe.ownerId)}</p>
+          </div>
+          <div class="recipe-actions">
+            ${buttons}
+          </div>
+        </div>
+      </div>
+    `;
     }).join('');
 }
+
+// small helper to avoid injecting raw HTML from server data
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 
 
 function filterRecipes() {
@@ -153,7 +168,7 @@ document.getElementById('timeFilter').addEventListener('input', filterRecipes);
 
 // Initial load from DB
 async function loader() {
-    await checkLogin(); 
+    await checkLogin();
     await loadRecipes();
 }
 
