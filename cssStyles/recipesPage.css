@@ -69,17 +69,26 @@ h2 {
 
 .filter-group select,
 .filter-group input {
-    width: 100%;
+    width: 100%;              /* Fixed: full width inside grid */
+    box-sizing: border-box;   /* Prevent overflow with padding/border */
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 14px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+    border-color: #ee5a24;
+    box-shadow: 0 0 5px rgba(238, 90, 36, 0.3);
+    outline: none;
 }
 
 .filter-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
+    gap: 10px;
 }
 
 .recipes-grid {

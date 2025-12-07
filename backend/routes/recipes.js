@@ -14,6 +14,20 @@ function fieldToString(f) {
     return String(f);
 }
 
+async function getRequestBody(req) {
+    return new Promise((resolve, reject) => {
+        let body = '';
+        req.on('data', chunk => body += chunk);
+        req.on('end', () => {
+            try {
+                resolve(JSON.parse(body || '{}'));
+            } catch (err) {
+                reject(err);
+            }
+        });
+    });
+}
+
 async function handleRecipes(req, res, sessions) {
     const db = getDB();
 
@@ -151,9 +165,11 @@ async function handleRecipes(req, res, sessions) {
                     tips,
                     imageUrl,
                     rating: { average: 0, count: 0 },
+                    userRatings: {}, // NEW: map of userId → rating
                     ownerId: session.id,
                     createdAt: new Date()
                 };
+
 
                 const insertResult = await db.collection("recipes").insertOne(recipe);
                 recipe._id = insertResult.insertedId;
@@ -227,39 +243,172 @@ async function handleRecipes(req, res, sessions) {
         return true;
     }
 
-    if (req.method === "GET" && req.url === "/recipes") {
+    if (req.method === "GET" && req.url.startsWith("/recipes")) {
         try {
-            // fetch recipes (include imageUrl by default)
-            const recipes = await db.collection("recipes").find().toArray();
+            const parts = req.url.split("/").filter(Boolean);
 
-            const ownerIds = recipes
-                .map(r => r.ownerId)
-                .filter(Boolean)
-                .map(id => new ObjectId(id));
+            // Case 1: GET /recipes → return all recipes
+            if (parts.length === 1) {
+                const recipes = await db.collection("recipes").find().toArray();
 
-            const owners = ownerIds.length
-                ? await db.collection("users")
-                    .find({ _id: { $in: ownerIds } }, { projection: { username: 1 } })
-                    .toArray()
-                : [];
+                // collect ownerIds safely
+                const ownerIds = recipes
+                    .map(r => r.ownerId)
+                    .filter(id => id && ObjectId.isValid(id))
+                    .map(id => new ObjectId(id));
 
-            const ownerMap = {};
-            owners.forEach(u => { ownerMap[u._id.toString()] = u.username; });
+                const owners = ownerIds.length
+                    ? await db.collection("users")
+                        .find({ _id: { $in: ownerIds } }, { projection: { username: 1 } })
+                        .toArray()
+                    : [];
 
-            recipes.forEach(r => {
-                r.ownerName = ownerMap[r.ownerId?.toString()] || "Unknown";
-                r.imageUrl = r.imageUrl || null;
-            });
+                const ownerMap = {};
+                owners.forEach(u => { ownerMap[u._id.toString()] = u.username; });
 
-            res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify({ message: "All recipes", recipes }));
+                // normalize and attach owner names
+                recipes.forEach(r => {
+                    r._id = r._id.toString();
+                    if (r.ownerId && ObjectId.isValid(r.ownerId)) {
+                        r.ownerId = r.ownerId.toString();
+                    }
+                    r.ownerName = ownerMap[r.ownerId] || "Unknown";
+                    r.imageUrl = r.imageUrl || null;
+                });
+
+                // optionally attach current user's rating for each recipe
+                const cookies = parseCookies(req.headers.cookie);
+                const sessionId = cookies.sessionId;
+                const session = sessions[sessionId];
+                if (session) {
+                    const userId = session.id;
+                    recipes.forEach(r => {
+                        r.userRating = r.userRatings?.[userId] || null;
+                    });
+                }
+
+                res.setHeader("Content-Type", "application/json");
+                res.end(JSON.stringify({ message: "All recipes", recipes }));
+                return true;
+            }
+
+            // Case 2: GET /recipes/:id → return one recipe
+            if (parts.length === 2) {
+                const recipeId = parts[1];
+                if (!ObjectId.isValid(recipeId)) {
+                    res.statusCode = 400;
+                    res.end(JSON.stringify({ message: "Invalid recipe ID" }));
+                    return true;
+                }
+
+                const recipe = await db.collection("recipes").findOne({ _id: new ObjectId(recipeId) });
+                if (!recipe) {
+                    res.statusCode = 404;
+                    res.end(JSON.stringify({ message: "Recipe not found" }));
+                    return true;
+                }
+
+                if (recipe.ownerId && ObjectId.isValid(recipe.ownerId)) {
+                    const owner = await db.collection("users").findOne(
+                        { _id: new ObjectId(recipe.ownerId) },
+                        { projection: { username: 1 } }
+                    );
+                    recipe.ownerName = owner?.username || "Unknown";
+                }
+
+                recipe._id = recipe._id.toString();
+                recipe.imageUrl = recipe.imageUrl || null;
+
+                // attach current user's rating
+                const cookies = parseCookies(req.headers.cookie);
+                const sessionId = cookies.sessionId;
+                const session = sessions[sessionId];
+                if (session) {
+                    const userId = session.id;
+                    recipe.userRating = recipe.userRatings?.[userId] || null;
+                }
+
+                res.setHeader("Content-Type", "application/json");
+                res.end(JSON.stringify({ message: "Recipe found", recipe }));
+                return true;
+            }
         } catch (err) {
-            console.error('Error in GET /recipes:', err);
+            console.error("Error in GET /recipes:", err);
             res.statusCode = 500;
             res.end(JSON.stringify({ message: "Error fetching recipes", error: err.message }));
+            return true;
+        }
+    }
+
+
+    // POST /recipes/:id/rate
+    if (req.method === "POST" && req.url.startsWith("/recipes/") && req.url.endsWith("/rate")) {
+        try {
+            const recipeId = req.url.split("/")[2];
+            const { rating } = await getRequestBody(req);
+
+            if (!rating || rating < 1 || rating > 5) {
+                res.statusCode = 400;
+                res.end(JSON.stringify({ message: "Invalid rating value" }));
+                return true;
+            }
+
+            const cookies = parseCookies(req.headers.cookie);
+            const sessionId = cookies.sessionId;
+            const session = sessions[sessionId];
+
+            if (!session) {
+                res.statusCode = 401;
+                res.end(JSON.stringify({ message: "Login required to rate" }));
+                return true;
+            }
+
+            const userId = session.id;
+
+            const recipe = await db.collection("recipes").findOne({ _id: new ObjectId(recipeId) });
+            if (!recipe) {
+                res.statusCode = 404;
+                res.end(JSON.stringify({ message: "Recipe not found" }));
+                return true;
+            }
+
+            // Ratings map: { userId: rating }
+            const existingRatings = recipe.userRatings || {};
+            const hadPrevious = existingRatings[userId] !== undefined;
+            const oldRating = existingRatings[userId];
+
+            // Update this user's rating
+            existingRatings[userId] = rating;
+
+            // Recalculate average/count
+            const allRatings = Object.values(existingRatings);
+            const newCount = allRatings.length;
+            const newAverage = allRatings.reduce((sum, r) => sum + r, 0) / newCount;
+
+            const updatedRating = { average: newAverage, count: newCount };
+
+            await db.collection("recipes").updateOne(
+                { _id: new ObjectId(recipeId) },
+                { $set: { rating: updatedRating, userRatings: existingRatings } }
+            );
+
+            res.setHeader("Content-Type", "application/json");
+            res.end(JSON.stringify({
+                message: hadPrevious ? "Rating updated" : "Rating saved",
+                rating: updatedRating,
+                userRating: rating
+            }));
+        } catch (err) {
+            console.error("Error in POST /recipes/:id/rate:", err);
+            res.statusCode = 500;
+            res.end(JSON.stringify({ message: "Error saving rating", error: err.message }));
         }
         return true;
     }
+
+
+
+
 
     return false;
 }
