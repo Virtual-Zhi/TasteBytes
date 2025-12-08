@@ -88,34 +88,20 @@ const client = google.accounts.oauth2.initCodeClient({
   client_id: "261255118602-r5igalkpb2q6oe2jo5lp1td3uas6v11r.apps.googleusercontent.com",
   scope: "email profile",
   ux_mode: "popup",
-  callback: async (response) => {
-    try {
-      const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/google_login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: response.code })
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        localStorage.setItem("token", data.token);
-        alert("Welcome " + data.username + "!");
-        window.location.href = "/";
-      } else {
-        alert("Google login failed: " + data.message);
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Network error during Google login.");
-    }
+  redirect_uri: "https://tastebytes-6498b743cd23.herokuapp.com/google_login/callback", // must match backend + Google Console
+  callback: (response) => {
+    // response.code is the authorization code
+    fetch("https://tastebytes-6498b743cd23.herokuapp.com/google_login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: response.code })
+    });
   }
 });
-
 
 // Attach to your Google login button(s)
 document.querySelectorAll(".google-btn").forEach(btn => {
   btn.addEventListener("click", () => {
-    client.requestCode(); // opens Google popup
+    client.requestCode();
   });
 });
