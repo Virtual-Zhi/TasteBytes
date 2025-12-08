@@ -113,7 +113,8 @@ const client = google.accounts.oauth2.initCodeClient({
 });
 
 // Trigger login when user clicks a button
-document.getElementById("googleLoginBtn").onclick = () => client.requestCode();
+document.getElementById("googleLoginBtn").addEventListener("click", () => client.requestCode());
+
 
 // Attach to your Google login button(s)
 document.querySelectorAll(".google-btn").forEach(btn => {
