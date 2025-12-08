@@ -52,7 +52,7 @@ function renderRecipes(recipesToShow) {
         const imgSrc = recipe.imageUrl || '../images/homePage.jpg';
         const avgRating = recipe.rating?.average ? Number(recipe.rating.average).toFixed(1) : "0.0";
         const ratingCount = recipe.rating?.count || 0;
-        let buttons = `<button class="view-recipe-btn" onclick="viewRecipe('${recipe._id}')">👀 View Recipe</button>`;
+        let buttons = `<button class="view-recipe-btn" onclick="viewRecipe('${recipe._id}')">View Recipe</button>`;
         if (isLoggedIn) {
             const added = userCollection.has(recipe._id);
             buttons += `<button class="add-to-collection-btn ${added ? 'added' : ''}" onclick="toggleCollection('${recipe._id}')">
@@ -113,9 +113,15 @@ async function toggleCollection(recipeId) {
     const alreadySaved = userCollection.has(recipeId);
     const endpoint = alreadySaved ? "remove_recipe" : "save_recipe";
 
-    if(!alreadySaved && userPlan == "Free" && userCollection.size >= 5){
-        alert("You've reached the save limit for Free plan. Please upgrade to Premium for unlimited saves");
+    if (!alreadySaved && userPlan == "Free" && userCollection.size >= 5) {
+        showModal("Free Limit Reached", "You've reached the save limit for Free plan. Please upgrade to Premium for unlimited saves");
         return;
+    }
+
+    if (endpoint == "remove_recipe") {
+        showNotification("Removed from saved", 3000);
+    } else {
+        showNotification("Added to saved collection", 3000);
     }
 
     const res = await fetch(`http://localhost:8080/${endpoint}`, {

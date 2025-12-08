@@ -107,6 +107,10 @@ function initSubmitRecipe() {
     };
 }
 
+function viewRecipe(recipeId) {
+    window.location.href = `../pages/view-recipe.html?id=${recipeId}`;
+}
+
 function renderMyPosts() {
     const postsContainer = document.getElementById("myPostsList");
     if (!profileData || !allRecipes.length) {
@@ -118,7 +122,7 @@ function renderMyPosts() {
       <h2>${escapeHtml(r.title)}</h2>
       <span>${escapeHtml(r.type || '')}</span>
       <div><span>${escapeHtml(String(r.prepTime || 0))} min</span>
-      <span>${escapeHtml(String(r.rating?.average || 0))}/5 (${escapeHtml(String(r.rating?.count || 0))})</span></div>
+      <span>★${escapeHtml(String(r.rating?.average || 0))}/5 (${escapeHtml(String(r.rating?.count || 0))})</span></div>
       <div><strong>Ingredients:</strong> ${(r.ingredients || []).slice(0, 3).map(escapeHtml).join(', ')}${(r.ingredients || []).length > 3 ? '…' : ''}</div>
       <p>Made by: ${escapeHtml(profileData.username)}</p>
       <button onclick="viewRecipe('${r._id}')">View Recipe</button>
@@ -136,7 +140,7 @@ function renderSavedRecipes() {
       <h2>${escapeHtml(r.title)}</h2>
       <span>${escapeHtml(r.type || '')}</span>
       <div><span>⏱${escapeHtml(String(r.prepTime || 0))} min</span>
-      <span>${escapeHtml(String(r.rating?.average || 0))}/5 (${escapeHtml(String(r.rating?.count || 0))})</span></div>
+      <span>★${escapeHtml(String(r.rating?.average || 0))}/5 (${escapeHtml(String(r.rating?.count || 0))})</span></div>
       <div><strong>Ingredients:</strong> ${(r.ingredients || []).slice(0, 3).map(escapeHtml).join(', ')}${(r.ingredients || []).length > 3 ? '…' : ''}</div>
       <p>Made by: ${escapeHtml(r.ownerName || r.ownerId)}</p>
       <button onclick="viewRecipe('${r._id}')">View Recipe</button>
