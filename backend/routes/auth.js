@@ -120,7 +120,8 @@ async function handleAuth(req, res, sessions) {
                 const sessionId = user._id.toString();
                 sessions[sessionId] = { id: user._id.toString(), username: user.username };
 
-                res.setHeader('Set-Cookie', 'sessionId=; HttpOnly; Path=/; SameSite=None; Secure; Max-Age=0');
+                const cookieValue = `sessionId=${sessionId}; HttpOnly; Path=/; SameSite=None; Secure; Max-Age=${60 * 60 * 24 * 7}`;
+                res.setHeader('Set-Cookie', cookieValue);
                 res.end(JSON.stringify({ message: "Google login successful!", username: user.username }));
             } catch (err) {
                 console.error("Google login error:", err);

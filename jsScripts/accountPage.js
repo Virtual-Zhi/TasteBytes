@@ -3,7 +3,7 @@ let allRecipes = [];
 
 async function loadAccount() {
     try {
-        const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/profile", { credentials: "include" });
+        const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/profile", { method: "GET", credentials: "include" });
         const data = await res.json();
         if (data.error || data.message === "Not logged in") return;
 

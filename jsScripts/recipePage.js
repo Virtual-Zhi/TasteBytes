@@ -5,7 +5,7 @@ let userPlan;
 
 async function checkLogin() {
     try {
-        const res = await fetch('https://tastebytes-6498b743cd23.herokuapp.com/profile', { credentials: 'include' });
+        const res = await fetch('https://tastebytes-6498b743cd23.herokuapp.com/profile', { method: "GET", credentials: 'include' });
         if (res.ok) {
             const data = await res.json();
             isLoggedIn = true;
