@@ -84,7 +84,6 @@ document.getElementById("createForm").addEventListener("submit", async (e) => {
   }
 });
 
-// ---------------- GOOGLE LOGIN ----------------
 const client = google.accounts.oauth2.initCodeClient({
   client_id: "261255118602-r5igalkpb2q6oe2jo5lp1td3uas6v11r.apps.googleusercontent.com",
   scope: "email profile",
@@ -100,11 +99,9 @@ const client = google.accounts.oauth2.initCodeClient({
       const data = await res.json();
 
       if (res.ok) {
-        // Save token in localStorage
         localStorage.setItem("token", data.token);
-
         alert("Welcome " + data.username + "!");
-        window.history.back();
+        window.location.href = "/";
       } else {
         alert("Google login failed: " + data.message);
       }
@@ -114,6 +111,9 @@ const client = google.accounts.oauth2.initCodeClient({
     }
   }
 });
+
+// Trigger login when user clicks a button
+document.getElementById("googleLoginBtn").onclick = () => client.requestCode();
 
 // Attach to your Google login button(s)
 document.querySelectorAll(".google-btn").forEach(btn => {

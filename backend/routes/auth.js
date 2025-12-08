@@ -107,7 +107,6 @@ async function handleAuth(req, res) {
                     redirect_uri: "https://tastebytes-6498b743cd23.herokuapp.com/google_login/callback"
                 });
 
-
                 // Verify ID token
                 const ticket = await client.verifyIdToken({
                     idToken: tokens.id_token,
@@ -161,6 +160,7 @@ async function handleAuth(req, res) {
         });
         return true;
     }
+
 
 
     // ---------------- LOGOUT ----------------
