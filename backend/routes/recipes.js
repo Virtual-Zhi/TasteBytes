@@ -174,10 +174,9 @@ async function handleRecipes(req, res) {
             return res.end(JSON.stringify({ recipes }));
         }
 
-        // GET /recipes/:id → return single recipe with ownerName and userRating
+        // Single recipe
         if (parts.length === 2) {
             const id = parts[1];
-
             if (!ObjectId.isValid(id)) {
                 res.statusCode = 400;
                 return res.end(JSON.stringify({ message: "Invalid recipe ID" }));
@@ -189,25 +188,29 @@ async function handleRecipes(req, res) {
                 return res.end(JSON.stringify({ message: "Not found" }));
             }
 
-            // ownerName
-            if (recipe.ownerId && ObjectId.isValid(recipe.ownerId)) {
-                const owner = await db
-                    .collection("users")
-                    .findOne({ _id: new ObjectId(recipe.ownerId) }, { projection: { username: 1 } });
-                recipe.ownerId = recipe.ownerId.toString();
-                recipe.ownerName = owner?.username || "Unknown";
-            } else {
-                recipe.ownerName = "Unknown";
-            }
-
             recipe._id = recipe._id.toString();
 
-            // Attach userRating if logged in
-            const session = await getSession(req, db);
-            const userRating = session ? recipe.userRatings?.[session.userId] || null : null;
+            // attach ownerName
+            if (recipe.ownerId && ObjectId.isValid(recipe.ownerId)) {
+                const owner = await db.collection("users").findOne(
+                    { _id: new ObjectId(recipe.ownerId) },
+                    { projection: { username: 1 } }
+                );
+                recipe.ownerId = recipe.ownerId.toString();
+                recipe.ownerName = owner?.username || "Unknown";
+            }
 
+            // attach userRating if logged in
+            const session = await getSession(req, db);
+            let userRating = null;
+            if (session) {
+                userRating = recipe.userRatings?.[session.userId] || null;
+            }
+
+            res.setHeader("Content-Type", "application/json");
             return res.end(JSON.stringify({ recipe, userRating }));
         }
+
     }
 
     // ---------------- POST /recipes/:id/rate ----------------
