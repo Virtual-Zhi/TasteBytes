@@ -91,7 +91,7 @@ window.onload = async () => {
 
             signinBtn.textContent = "Sign In";
 
-            if (location.pathname.endsWith("index.html")) {
+            if (location.pathname.endsWith("index.html") || location.pathname.endsWith("TasteBytes/")) {
                 signinBtn.href = "./pages/login.html";
             } else {
                 signinBtn.href = "login.html";

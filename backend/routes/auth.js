@@ -81,7 +81,10 @@ async function handleAuth(req, res, sessions) {
                 );
 
                 // Set cookie
-                res.setHeader("Set-Cookie", `sessionId=${sessionId}; HttpOnly; Path=/; SameSite=None; Secure; Max-Age=${60 * 60 * 24 * 7}`);
+                res.setHeader(
+                    "Set-Cookie",
+                    `sessionId=${sessionId}; HttpOnly; Path=/; SameSite=None; Secure; Max-Age=${60 * 60 * 24 * 7}`
+                );
                 res.end(JSON.stringify({ message: "Login successful!", username: user.username }));
             } catch (err) {
                 console.error("Login error:", err);
@@ -147,7 +150,10 @@ async function handleAuth(req, res, sessions) {
 
 
                 // Set cookie
-                res.setHeader("Set-Cookie", `sessionId=${sessionId}; HttpOnly; Path=/; SameSite=None; Secure; Max-Age=${60 * 60 * 24 * 7}`);
+                res.setHeader(
+                    "Set-Cookie",
+                    `sessionId=${sessionId}; HttpOnly; Path=/; SameSite=None; Secure; Max-Age=${60 * 60 * 24 * 7}`
+                );
                 res.end(JSON.stringify({ message: "Google login successful!", username: user.username }));
             } catch (err) {
                 console.error("Google login error:", err);
