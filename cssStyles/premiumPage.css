@@ -20,10 +20,10 @@ body {
 }
 
 .price {
-    display: flex; 
-    gap: 2rem; 
-    justify-content: center; 
-    align-items: stretch; 
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    align-items: stretch;
 }
 
 /* Title */
@@ -50,4 +50,26 @@ button {
 button:hover {
     background: #d7263d;
     transform: scale(1.03);
+}
+
+.back-button {
+    position: fixed;
+    /* stays in place even when scrolling */
+    top: 20px;
+    /* distance from the top */
+    left: 20px;
+    /* distance from the left */
+    background-color: #f0f0f0;
+    color: #333;
+    padding: 8px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.back-button:hover {
+    background-color: #ddd;
 }

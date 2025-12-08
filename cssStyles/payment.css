@@ -1,0 +1,132 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #ff914d, #ff4d6d);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    /* align card to top instead of center */
+    padding: 2rem 1rem;
+    /* add breathing room at top and sides */
+    box-sizing: border-box;
+    overflow-y: auto;
+    /* allow scrolling if card is taller than screen */
+}
+
+.payment {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    width: 700px;
+    max-width: 100%;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+}
+
+.payment h1 {
+    margin-bottom: 0.5rem;
+    color: #ff4d6d;
+    font-size: 1.8rem;
+    text-align: center;
+}
+
+.payment h2 {
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    color: #333;
+    text-align: center;
+}
+
+.checkout-form h2 {
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    color: #333;
+}
+
+.form-section {
+    margin-bottom: 1.5rem;
+}
+
+.form-section h3 {
+    margin-bottom: 0.8rem;
+    font-size: 1.1rem;
+    color: #ff4d6d;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: bold;
+    color: #333;
+}
+
+input {
+    width: 100%;
+    padding: 0.6rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    outline: none;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus {
+    border: 1px solid #ff4d6d;
+    box-shadow: 0 0 5px rgba(255, 77, 109, 0.4);
+}
+
+.checkout-btn {
+    width: 100%;
+    padding: 0.9rem;
+    background: #ff4d6d;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.checkout-btn:hover {
+    background: #d7263d;
+    transform: scale(1.03);
+}
+
+.back-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background-color: #f0f0f0;
+    color: #333;
+    padding: 8px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.back-button:hover {
+    background-color: #ddd;
+}
+
+@media (max-width: 768px) {
+    .payment {
+        width: 100%;
+        padding: 1.2rem;
+    }
+
+    .payment h1 {
+        font-size: 1.5rem;
+    }
+
+    .payment h2 {
+        font-size: 0.9rem;
+    }
+}
