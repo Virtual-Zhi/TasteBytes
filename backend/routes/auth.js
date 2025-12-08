@@ -102,7 +102,11 @@ async function handleAuth(req, res) {
                 const { code } = JSON.parse(body);
 
                 // Exchange code for tokens
-                const { tokens } = await client.getToken({ code, redirect_uri: "postmessage" });
+                const { tokens } = await client.getToken({
+                    code,
+                    redirect_uri: "https://tastebytes-6498b743cd23.herokuapp.com/google_login/callback"
+                });
+
 
                 // Verify ID token
                 const ticket = await client.verifyIdToken({
@@ -157,6 +161,7 @@ async function handleAuth(req, res) {
         });
         return true;
     }
+
 
     // ---------------- LOGOUT ----------------
     if (req.method === "POST" && req.url === "/logout") {

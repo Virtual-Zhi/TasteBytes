@@ -113,11 +113,7 @@ function initSubmitRecipe() {
                 }
                 renderMyPosts();
             } else {
-                if (data?.message) {
-                    showModal("Free Limit Reached", data?.message);
-                    return;
-                }
-                alert(data?.error || 'Server error');
+                showModal("An error occured", data?.error || data?.message || 'Server error');
                 setImageStatus('Upload failed', 'error');
             }
         } catch {
@@ -182,6 +178,7 @@ async function showMyRecipes(dashboard, dynamic, path) {
             };
         });
         initSubmitRecipe();
+        loadAllRecipes();
         renderMyPosts();
         renderSavedRecipes();
     } catch {
