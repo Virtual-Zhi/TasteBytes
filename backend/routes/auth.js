@@ -59,16 +59,29 @@ async function handleAuth(req, res, sessions) {
                     return res.end(JSON.stringify({ message: "User not found" }));
                 }
 
-                if (password != user.password) {
+                if (user.password !== password) {
                     res.statusCode = 400;
                     return res.end(JSON.stringify({ message: "Invalid credentials" }));
                 }
 
+                // Use user._id as sessionId
                 const sessionId = user._id.toString();
-                sessions[sessionId] = { id: user._id.toString(), username: user.username };
 
-                const cookieValue = `sessionId=${sessionId}; HttpOnly; Path=/; SameSite=None; Secure; Max-Age=${60 * 60 * 24 * 7}`;
-                res.setHeader('Set-Cookie', cookieValue);
+                // Store session in Mongo (upsert so it refreshes if already exists)
+                await db.collection("sessions").updateOne(
+                    { _id: sessionId },
+                    {
+                        $set: {
+                            userId: user._id,
+                            createdAt: new Date(),
+                            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+                        }
+                    },
+                    { upsert: true }
+                );
+
+                // Set cookie
+                res.setHeader("Set-Cookie", `sessionId=${sessionId}; HttpOnly; Path=/; SameSite=None; Secure; Max-Age=${60 * 60 * 24 * 7}`);
                 res.end(JSON.stringify({ message: "Login successful!", username: user.username }));
             } catch (err) {
                 console.error("Login error:", err);
@@ -87,12 +100,12 @@ async function handleAuth(req, res, sessions) {
                 const { code } = JSON.parse(body);
 
                 // Exchange code for tokens
-                const { tokens } = await client.getToken({ code, redirect_uri: "postmessage", });
+                const { tokens } = await client.getToken({ code, redirect_uri: "postmessage" });
 
                 // Verify ID token
                 const ticket = await client.verifyIdToken({
                     idToken: tokens.id_token,
-                    audience: "261255118602-r5igalkpb2q6oe2jo5lp1td3uas6v11r.apps.googleusercontent.com",
+                    audience: "YOUR_GOOGLE_CLIENT_ID",
                 });
 
                 const payload = ticket.getPayload();
@@ -116,12 +129,24 @@ async function handleAuth(req, res, sessions) {
                     user = await db.collection("users").findOne({ _id: result.insertedId });
                 }
 
-                // Create session
+                // Use user._id as sessionId
                 const sessionId = user._id.toString();
-                sessions[sessionId] = { id: user._id.toString(), username: user.username };
 
-                const cookieValue = `sessionId=${sessionId}; HttpOnly; Path=/; SameSite=None; Secure; Max-Age=${60 * 60 * 24 * 7}`;
-                res.setHeader('Set-Cookie', cookieValue);
+                // Store session in Mongo
+                await db.collection("sessions").updateOne(
+                    { _id: sessionId },
+                    {
+                        $set: {
+                            userId: user._id,
+                            createdAt: new Date(),
+                            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+                        }
+                    },
+                    { upsert: true }
+                );
+
+                // Set cookie
+                res.setHeader("Set-Cookie", `sessionId=${sessionId}; HttpOnly; Path=/; SameSite=None; Secure; Max-Age=${60 * 60 * 24 * 7}`);
                 res.end(JSON.stringify({ message: "Google login successful!", username: user.username }));
             } catch (err) {
                 console.error("Google login error:", err);
@@ -133,17 +158,16 @@ async function handleAuth(req, res, sessions) {
     }
 
     if (req.method === "POST" && req.url === "/logout") {
-        const { parseCookies } = require("../utils/cookies");
         const cookies = parseCookies(req.headers.cookie);
         const sessionId = cookies.sessionId;
         if (sessionId) {
-            delete sessions[sessionId];
+            await db.collection("sessions").deleteOne({ _id: sessionId });
         }
-
-        res.setHeader("Set-Cookie", "sessionId=; HttpOnly; Path=/; Max-Age=0");
+        res.setHeader("Set-Cookie", "sessionId=; HttpOnly; Path=/; Max-Age=0; SameSite=None; Secure");
         res.end(JSON.stringify({ message: "Logged out" }));
         return true;
     }
+
 
     return false;
 }
