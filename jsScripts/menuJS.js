@@ -49,8 +49,8 @@ window.onload = async () => {
         if (!token) {
             // not logged in → show Sign In button
             signinBtn.textContent = "Sign In";
-            if (location.pathname.endsWith("index.html") || location.pathname == "https://virtual-zhi.github.io/TasteBytes/") {
-                signinBtn.href = "./pages/login.html";
+            if (location.pathname.endsWith("index.html") || location.pathname.endsWith("TasteBytes/")) {
+                signinBtn.href = "./pages/login.html";  
             } else {
                 signinBtn.href = "login.html";
             }
