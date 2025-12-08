@@ -1,4 +1,3 @@
-
 .mission-banner {
     background-image: url("../images/about-mission-banner.jpg");
     background-size: cover;
@@ -30,23 +29,25 @@
     font-size: 3.2rem;
     font-weight: bold;
     margin-bottom: 1.2rem;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .mission-text p {
     font-size: 1.25rem;
     line-height: 1.7;
     color: #f9f9f9;
-    text-shadow: 0 1px 5px rgba(0,0,0,0.4);
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
 }
 
 @media (max-width: 900px) {
     .mission-banner {
         padding: 8rem 1.5rem;
     }
+
     .mission-text h1 {
         font-size: 2.4rem;
     }
+
     .mission-text p {
         font-size: 1.05rem;
     }
@@ -82,7 +83,8 @@
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 1.2rem;
 
-    max-width: 1200px; /* slightly narrower, prevents overflow */
+    max-width: 1200px;
+    /* slightly narrower, prevents overflow */
 }
 
 .core-values li {
@@ -93,13 +95,9 @@
     font-size: 1rem;
 
     color: #ff4d6d;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 
     transition: transform 0.25s ease;
-}
-
-.core-values li:hover {
-    transform: translateY(-6px);
 }
 
 .diversity-stats {
@@ -128,7 +126,7 @@
     color: white;
     padding: 2rem 1.5rem;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
     text-align: center;
 }
@@ -186,10 +184,12 @@
     .stats-card {
         padding: 1.8rem 1rem;
     }
+
     .core-values ul {
         grid-template-columns: 1fr 1fr;
     }
 }
+
 @media (max-width: 360px) {
 
     .mission-banner {
@@ -260,7 +260,7 @@
         font-size: 0.9rem;
         margin: 0.4rem 0;
         display: block;
-        width: 100%;    
+        width: 100%;
         max-width: 240px;
         margin-left: auto;
         margin-right: auto;

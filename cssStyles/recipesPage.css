@@ -26,6 +26,32 @@ h2 {
     margin-bottom: 1rem;
 }
 
+.simple-search {
+    display: flex;
+    gap: 8px;
+    margin: 12px 0;
+}
+
+.simple-search input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.simple-search button {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    background-color: #f44336;
+    color: white;
+    cursor: pointer;
+}
+
+.simple-search button:hover {
+    background: #da190b;
+}
+
 .recipe-image {
     width: 100%;
     height: 180px;
@@ -69,8 +95,8 @@ h2 {
 
 .filter-group select,
 .filter-group input {
-    width: 100%;              /* Fixed: full width inside grid */
-    box-sizing: border-box;   /* Prevent overflow with padding/border */
+    width: 100%;
+    box-sizing: border-box;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;

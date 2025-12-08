@@ -91,16 +91,19 @@ function escapeHtml(str) {
         .replace(/'/g, '&#39;');
 }
 
-function filterRecipes() {
-    const typeFilter = document.getElementById('typeFilter').value;
-    const ingredientFilter = document.getElementById('ingredientFilter').value.toLowerCase();
-    const timeFilter = document.getElementById('timeFilter').value;
+// Search + filter: name search runs only when includeName is true
+function filterRecipes(includeName = false) {
+    const typeFilter = document.getElementById('typeFilter')?.value || '';
+    const ingredientFilter = (document.getElementById('ingredientFilter')?.value || '').toLowerCase();
+    const timeFilter = document.getElementById('timeFilter')?.value || '';
+    const nameSearch = includeName ? (document.getElementById('pageSearchInput')?.value || '').trim().toLowerCase() : '';
 
     const filtered = recipes.filter(recipe => {
-        const matchesType = !typeFilter || recipe.type === typeFilter;
+        const matchesType = !typeFilter || (recipe.type || '') === typeFilter;
         const matchesIngredient = !ingredientFilter || (recipe.ingredients || []).some(ing => ing.toLowerCase().includes(ingredientFilter));
-        const matchesTime = !timeFilter || recipe.prepTime <= parseInt(timeFilter);
-        return matchesType && matchesIngredient && matchesTime;
+        const matchesTime = !timeFilter || (Number(recipe.prepTime || 0) <= parseInt(timeFilter));
+        const matchesName = !nameSearch || (recipe.title || '').toLowerCase().includes(nameSearch);
+        return matchesType && matchesIngredient && matchesTime && matchesName;
     });
 
     renderRecipes(filtered);
@@ -135,16 +138,47 @@ function clearFilters() {
     document.getElementById('typeFilter').value = '';
     document.getElementById('ingredientFilter').value = '';
     document.getElementById('timeFilter').value = '';
+    const searchInput = document.getElementById('pageSearchInput');
+    if (searchInput) searchInput.value = '';
     filterRecipes();
 }
 
-document.getElementById('typeFilter').addEventListener('change', filterRecipes);
-document.getElementById('ingredientFilter').addEventListener('input', filterRecipes);
-document.getElementById('timeFilter').addEventListener('input', filterRecipes);
+const typeEl = document.getElementById('typeFilter');
+const ingEl = document.getElementById('ingredientFilter');
+const timeEl = document.getElementById('timeFilter');
+const searchInput = document.getElementById('pageSearchInput');
+const searchBtn = document.getElementById('pageSearchBtn');
+const clearBtn = document.querySelector('.clear-filters-btn');
+
+if (typeEl)
+    typeEl.addEventListener('change', () => filterRecipes(false));
+if (ingEl)
+    ingEl.addEventListener('input', () => filterRecipes(false));
+if (timeEl)
+    timeEl.addEventListener('input', () => filterRecipes(false));
+
+if (searchBtn) searchBtn.addEventListener('click', () => filterRecipes(true));
+if (clearBtn) clearBtn.addEventListener('click', () => {
+    document.getElementById('typeFilter').value = '';
+    document.getElementById('ingredientFilter').value = '';
+    document.getElementById('timeFilter').value = '';
+    if (searchInput)
+        searchInput.value = '';
+    filterRecipes(false);
+});
 
 async function loader() {
     await checkLogin();
     await loadRecipes();
+
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get('q') || '';
+    if (q && searchInput) {
+        searchInput.value = q;
+        filterRecipes(true);
+    } else
+        filterRecipes(false);
 }
 
 loader();
+
