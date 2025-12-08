@@ -104,7 +104,7 @@ function initSubmitRecipe() {
             const data = await res.json();
             if (res.ok) {
                 setImageStatus('Image uploaded', 'uploaded');
-                alert('Recipe posted successfully!');
+                showNotification('Recipe posted successfully!', 3000);
                 form.reset();
                 setTimeout(() => setImageStatus('No image selected', 'no-image'), 1500);
                 if (data.recipe) {
@@ -113,7 +113,11 @@ function initSubmitRecipe() {
                 }
                 renderMyPosts();
             } else {
-                alert(data?.error || data?.message || 'Server error');
+                if (data?.message) {
+                    showModal("Free Limit Reached", data?.message);
+                    return;
+                }
+                alert(data?.error || 'Server error');
                 setImageStatus('Upload failed', 'error');
             }
         } catch {
