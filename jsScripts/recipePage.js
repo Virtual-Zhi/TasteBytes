@@ -32,7 +32,7 @@ async function checkLogin() {
 async function loadRecipes() {
     try {
         const token = localStorage.getItem("token");
-        const res = await fetch('https://tastebytes-.../recipes/', {
+        const res = await fetch('https://tastebytes-.../recipes', {
             headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();

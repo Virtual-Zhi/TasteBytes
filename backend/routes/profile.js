@@ -29,7 +29,16 @@ async function handleProfile(req, res) {
         }
 
         res.writeHead(200, { "Content-Type": "application/json" });
-        return res.end(JSON.stringify({ username: user.username, email: user.email, plan: user.plan }));
+        return res.end(JSON.stringify({
+            username: user.username,
+            email: user.email,
+            phone: user.phone,
+            plan: user.plan,
+            password: user.password,
+            posts: user.posts,
+            savedRecipes: user.savedRecipes
+        }));
+
     }
 
     return false;
