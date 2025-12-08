@@ -127,4 +127,12 @@ function renderSpotlight(r) {
   `;
 }
 
+
 fetchAndRenderHighlights();
+
+const token = localStorage.getItem("token");
+const accountLink = document.getElementById("accountBtn");
+if (token && accountLink) {
+    accountLink.textContent = "View Account";
+    accountLink.setAttribute("href", "./pages/my_account.html");
+}
