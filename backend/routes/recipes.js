@@ -97,19 +97,61 @@ async function handleRecipes(req, res) {
     // GET /recipes or /recipes/:id
     if (req.method === "GET" && req.url.startsWith("/recipes")) {
         const parts = req.url.split("/").filter(Boolean);
+
+        // GET /recipes → all recipes
         if (parts.length === 1) {
             const recipes = await db.collection("recipes").find().toArray();
-            recipes.forEach(r => r._id = r._id.toString());
+
+            // collect ownerIds
+            const ownerIds = recipes
+                .map(r => r.ownerId)
+                .filter(id => id && ObjectId.isValid(id))
+                .map(id => new ObjectId(id));
+
+            // fetch owners
+            const owners = ownerIds.length
+                ? await db.collection("users")
+                    .find({ _id: { $in: ownerIds } }, { projection: { username: 1 } })
+                    .toArray()
+                : [];
+
+            const ownerMap = {};
+            owners.forEach(u => { ownerMap[u._id.toString()] = u.username; });
+
+            // attach ownerName
+            recipes.forEach(r => {
+                r._id = r._id.toString();
+                if (r.ownerId && ObjectId.isValid(r.ownerId)) {
+                    r.ownerId = r.ownerId.toString();
+                    r.ownerName = ownerMap[r.ownerId] || "Unknown";
+                }
+            });
+
             return res.end(JSON.stringify({ recipes }));
         }
+
+        // GET /recipes/:id → single recipe
         if (parts.length === 2) {
             const id = parts[1];
             const recipe = await db.collection("recipes").findOne({ _id: new ObjectId(id) });
             if (!recipe) return res.end(JSON.stringify({ message: "Not found" }));
+
             recipe._id = recipe._id.toString();
+
+            // attach ownerName for single recipe
+            if (recipe.ownerId && ObjectId.isValid(recipe.ownerId)) {
+                const owner = await db.collection("users").findOne(
+                    { _id: new ObjectId(recipe.ownerId) },
+                    { projection: { username: 1 } }
+                );
+                recipe.ownerId = recipe.ownerId.toString();
+                recipe.ownerName = owner?.username || "Unknown";
+            }
+
             return res.end(JSON.stringify({ recipe }));
         }
     }
+
 
     // POST /recipes/:id/rate
     if (req.method === "POST" && req.url.startsWith("/recipes/") && req.url.endsWith("/rate")) {
