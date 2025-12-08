@@ -1,7 +1,24 @@
 {
-  "dependencies": {
-    "formidable": "^3.5.4",
-    "google-auth-library": "^10.5.0",
-    "mongodb": "^7.0.0"
-  }
+    "name": "tastebytes",
+    "version": "1.0.0",
+    "description": "node app ",
+    "main": "server.js",
+    "scripts": {
+        "start": "node backend/server.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": ""
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": ""
+    },
+    "homepage": "",
+    "dependencies": {
+        "formidable": "^3.5.4",
+        "google-auth-library": "^10.5.0",
+        "mongodb": "^7.0.0"
+    }
 }

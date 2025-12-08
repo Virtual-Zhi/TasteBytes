@@ -3,7 +3,7 @@ let allRecipes = [];
 
 async function loadAccount() {
     try {
-        const res = await fetch("http://localhost:8080/profile", { credentials: "include" });
+        const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/profile", { credentials: "include" });
         const data = await res.json();
         if (data.error || data.message === "Not logged in") return;
 
@@ -23,7 +23,7 @@ async function loadAccount() {
 
 async function loadAllRecipes() {
     try {
-        const res = await fetch("http://localhost:8080/recipes", { credentials: "include" });
+        const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/recipes", { credentials: "include" });
         const data = await res.json();
         if (res.ok) allRecipes = data.recipes;
     } catch { }
@@ -84,7 +84,7 @@ function initSubmitRecipe() {
 
         try {
             setImageStatus('Uploading image...', 'uploading');
-            const res = await fetch('http://localhost:8080/post_recipe', { method: 'POST', body: fd, credentials: 'include' });
+            const res = await fetch('https://tastebytes-6498b743cd23.herokuapp.com/post_recipe', { method: 'POST', body: fd, credentials: 'include' });
             const data = await res.json();
             if (res.ok) {
                 setImageStatus('Image uploaded', 'uploaded');

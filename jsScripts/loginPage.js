@@ -22,7 +22,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     const password = document.getElementById("password").value;
 
     try {
-        const res = await fetch("http://localhost:8080/login", {
+      const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
@@ -62,7 +62,7 @@ document.getElementById("createForm").addEventListener("submit", async (e) => {
     }
 
     try {
-        const res = await fetch("http://localhost:8080/create_account", {
+      const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/create_account", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ newUsername, newEmail, newPassword }),
@@ -92,7 +92,7 @@ const client = google.accounts.oauth2.initCodeClient({
   ux_mode: "popup",
   callback: async (response) => {
     try {
-      const res = await fetch("http://localhost:8080/google_login", {
+      const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/google_login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code: response.code }), // send code to backend

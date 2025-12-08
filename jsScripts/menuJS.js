@@ -45,7 +45,7 @@ window.onload = async () => {
     const signinBtn = document.querySelector(".signin-btn");
 
     try {
-        const res = await fetch("http://localhost:8080/profile", {
+        const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/profile", {
             method: "GET",
             credentials: "include"
         });
@@ -76,7 +76,7 @@ window.onload = async () => {
 
             document.getElementById("logoutBtn").addEventListener("click", async (e) => {
                 e.preventDefault();
-                await fetch("http://localhost:8080/logout", {
+                await fetch("https://tastebytes-6498b743cd23.herokuapp.com/logout", {
                     method: "POST",
                     credentials: "include"
                 });

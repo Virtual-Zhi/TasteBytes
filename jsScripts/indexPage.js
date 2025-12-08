@@ -55,7 +55,7 @@ function shortText(str, maxWords = 20) {
 
 async function fetchAndRenderHighlights() {
     try {
-        const res = await fetch("http://localhost:8080/recipes/", { credentials: "include" });
+        const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/recipes/", { credentials: "include" });
         if (!res.ok) throw new Error("Failed to fetch recipes");
         const payload = await res.json();
         const recipes = Array.isArray(payload.recipes) ? payload.recipes : [];

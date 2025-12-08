@@ -3,13 +3,14 @@ const { connectDB } = require("./utils/db");
 const { handleAuth } = require("./routes/auth");
 const { handleProfile } = require("./routes/profile");
 const { handleRecipes } = require("./routes/recipes");
+const PORT = process.env.PORT || 8080;
 
 const sessions = {};
 
 connectDB();
 
 const server = http.createServer(async (req, res) => {
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:5500");
+    res.setHeader("Access-Control-Allow-Origin", "https://virtual-zhi.github.io/TasteBytes/");
     res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -27,6 +28,6 @@ const server = http.createServer(async (req, res) => {
     res.end(JSON.stringify({ message: "Not found" }));
 });
 
-server.listen(8080, () => {
-    console.log("Server listening on port 8080");
+server.listen(PORT, () => {
+    console.log("Server listening on Heroku");
 });

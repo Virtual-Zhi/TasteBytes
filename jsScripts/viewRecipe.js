@@ -5,15 +5,15 @@ const ratingDisplay = document.getElementById('ratingDisplay');
 
 async function loadAccount() {
   try {
-    const res = await fetch("http://localhost:8080/profile", { credentials: "include" });
+    const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/profile", { credentials: "include" });
     const data = await res.json();
     if (!data.error && data.message !== "Not logged in") profileData = data.user;
-  } catch {}
+  } catch { }
 }
 
 async function loadRecipe() {
   try {
-    const res = await fetch(`http://localhost:8080/recipes/${recipeId}`, { credentials: 'include' });
+    const res = await fetch(`https://tastebytes-6498b743cd23.herokuapp.com/recipes/${recipeId}`, { credentials: 'include' });
     const data = await res.json();
     if (!res.ok || !data.recipe) throw new Error();
     showRecipe(data.recipe);
@@ -72,13 +72,13 @@ function updateStars(rating) {
 
 function escapeHtml(str) {
   return String(str)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;')
-    .replace(/'/g,'&#39;');
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 async function submitRating(recipeId, rating) {
-  const res = await fetch(`http://localhost:8080/recipes/${recipeId}/rate`, {
+  const res = await fetch(`https://tastebytes-6498b743cd23.herokuapp.com/recipes/${recipeId}/rate`, {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },

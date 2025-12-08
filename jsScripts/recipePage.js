@@ -5,7 +5,7 @@ let userPlan;
 
 async function checkLogin() {
     try {
-        const res = await fetch('http://localhost:8080/profile', { credentials: 'include' });
+        const res = await fetch('https://tastebytes-6498b743cd23.herokuapp.com/profile', { credentials: 'include' });
         if (res.ok) {
             const data = await res.json();
             isLoggedIn = true;
@@ -22,7 +22,7 @@ async function checkLogin() {
 
 async function loadRecipes() {
     try {
-        const res = await fetch('http://localhost:8080/recipes/', { credentials: 'include' });
+        const res = await fetch('https://tastebytes-6498b743cd23.herokuapp.com/recipes/', { credentials: 'include' });
         const data = await res.json();
         if (res.ok) {
             recipes = data.recipes;
@@ -124,7 +124,7 @@ async function toggleCollection(recipeId) {
         showNotification("Added to saved collection", 3000);
     }
 
-    const res = await fetch(`http://localhost:8080/${endpoint}`, {
+    const res = await fetch(`https://tastebytes-6498b743cd23.herokuapp.com/${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ recipeId }),
