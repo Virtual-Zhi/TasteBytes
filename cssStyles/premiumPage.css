@@ -52,24 +52,42 @@ button:hover {
     transform: scale(1.03);
 }
 
-.back-button {
-    position: fixed;
-    /* stays in place even when scrolling */
-    top: 20px;
-    /* distance from the top */
-    left: 20px;
-    /* distance from the left */
-    background-color: #f0f0f0;
-    color: #333;
-    padding: 8px 12px;
-    border-radius: 4px;
-    text-decoration: none;
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-    font-weight: bold;
-    transition: background-color 0.2s ease;
+
+@media (max-width: 1500px) {
+    header {
+        padding: 8rem 2rem;
+        background-position: center -200px;
+    }
 }
 
-.back-button:hover {
-    background-color: #ddd;
+@media (max-width: 1200px) {
+    header {
+        padding: 8rem 2rem;
+        background-position: center -50px;
+    }
+
+    .model {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 1000px) {
+    header {
+        padding: 8rem 2rem;
+        background-position: center 0px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .recipes-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-row {
+        grid-template-columns: 1fr;
+    }
 }
