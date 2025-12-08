@@ -88,7 +88,6 @@ const client = google.accounts.oauth2.initCodeClient({
     client_id: "261255118602-r5igalkpb2q6oe2jo5lp1td3uas6v11r.apps.googleusercontent.com",
     scope: "email profile",
     ux_mode: "popup",
-    //redirect_uri: "https://tastebytes-6498b743cd23.herokuapp.com/google_login/callback", // must match backend + Google Console
     callback: async (response) => {
         try {
             const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/google_login", {

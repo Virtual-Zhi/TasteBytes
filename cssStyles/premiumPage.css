@@ -26,14 +26,12 @@ body {
     align-items: stretch;
 }
 
-/* Title */
 .model h1 {
     margin-bottom: 1.5rem;
     color: #ff4d6d;
     font-size: 1.8rem;
 }
 
-/* Buttons */
 button {
     width: 100%;
     padding: 0.8rem;
@@ -52,6 +50,25 @@ button:hover {
     transform: scale(1.03);
 }
 
+
+.back-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background-color: #f0f0f0;
+    color: #333;
+    padding: 8px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.back-button:hover {
+    background-color: #ddd;
+}
 
 @media (max-width: 1500px) {
     header {

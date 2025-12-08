@@ -6,12 +6,9 @@ body {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    /* align card to top instead of center */
     padding: 2rem 1rem;
-    /* add breathing room at top and sides */
     box-sizing: border-box;
     overflow-y: auto;
-    /* allow scrolling if card is taller than screen */
 }
 
 .payment {
