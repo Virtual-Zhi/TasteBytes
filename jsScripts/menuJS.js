@@ -45,14 +45,25 @@ window.onload = async () => {
     const signinBtn = document.querySelector(".signin-btn");
 
     try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            // not logged in → show Sign In button
+            signinBtn.textContent = "Sign In";
+            if (location.pathname.endsWith("index.html") || location.pathname == "https://virtual-zhi.github.io/TasteBytes/") {
+                signinBtn.href = "./pages/login.html";
+            } else {
+                signinBtn.href = "login.html";
+            }
+            return;
+        }
+
         const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/profile", {
             method: "GET",
-            credentials: "include"
+            headers: { Authorization: `Bearer ${token}` }
         });
 
         if (res.ok) {
             const data = await res.json();
-
 
             navLinks.removeChild(signinBtn);
 
@@ -64,7 +75,7 @@ window.onload = async () => {
             const prefix = path.includes("/pages/") ? "../" : "./";
 
             profileMenu.innerHTML = `
-                <button class="dropbtn">${data.user.username} ▼</button>
+                <button class="dropbtn">${data.username} ▼</button>
                 <div class="dropdown-content">
                     <a href="${prefix}pages/my_account.html">Profile</a>
                     <a href="#" id="logoutBtn">Logout</a>
@@ -73,13 +84,13 @@ window.onload = async () => {
 
             navLinks.appendChild(profileMenu);
 
-
             document.getElementById("logoutBtn").addEventListener("click", async (e) => {
                 e.preventDefault();
                 await fetch("https://tastebytes-6498b743cd23.herokuapp.com/logout", {
                     method: "POST",
-                    credentials: "include"
+                    headers: { Authorization: `Bearer ${token}` }
                 });
+                localStorage.removeItem("token"); // clear token
                 alert("Logged out!");
                 if (location.pathname.endsWith("my_account.html")) {
                     location = "../index.html";
@@ -88,9 +99,9 @@ window.onload = async () => {
                 }
             });
         } else {
-
+            // fallback if token invalid
+            localStorage.removeItem("token");
             signinBtn.textContent = "Sign In";
-
             if (location.pathname.endsWith("index.html") || location.pathname.endsWith("TasteBytes/")) {
                 signinBtn.href = "./pages/login.html";
             } else {
@@ -100,7 +111,8 @@ window.onload = async () => {
     } catch (err) {
         console.error("Error checking login:", err);
     }
-}
+};
+
 
 
 

@@ -3,11 +3,18 @@ let allRecipes = [];
 
 async function loadAccount() {
     try {
-        const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/profile", { method: "GET", credentials: "include" });
-        const data = await res.json();
-        if (data.error || data.message === "Not logged in") return;
+        const token = localStorage.getItem("token");
+        if (!token) return; // not logged in
 
-        profileData = data.user;
+        const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/profile", {
+            method: "GET",
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        if (!res.ok || data.message === "Not logged in") return;
+
+        profileData = data; // backend returns user object directly
         document.querySelector(".profile-banner h2").textContent = profileData.username;
         document.querySelector(".profile-banner p").textContent = `@${profileData.username}`;
         const stats = document.querySelectorAll(".stat-card .number");
@@ -18,8 +25,11 @@ async function loadAccount() {
         info[0].innerHTML = `Email: <strong>${profileData.email}</strong>`;
         info[1].innerHTML = `Phone: <strong>${profileData.phone}</strong>`;
         await loadAllRecipes();
-    } catch { }
+    } catch (err) {
+        console.error("Error loading account:", err);
+    }
 }
+
 
 async function loadAllRecipes() {
     try {

@@ -9,6 +9,7 @@ const sessions = {};
 
 connectDB();
 
+
 const server = http.createServer(async (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "https://virtual-zhi.github.io");
     res.setHeader("Access-Control-Allow-Credentials", "true");

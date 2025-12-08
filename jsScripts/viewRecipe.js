@@ -5,15 +5,27 @@ const ratingDisplay = document.getElementById('ratingDisplay');
 
 async function loadAccount() {
   try {
-    const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/profile", { method: "GET", credentials: "include" });
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/profile", {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` }
+    });
     const data = await res.json();
-    if (!data.error && data.message !== "Not logged in") profileData = data.user;
-  } catch { }
+    if (res.ok && !data.error && data.message !== "Not logged in") {
+      profileData = data;
+    } else {
+      localStorage.removeItem("token"); // clear invalid token
+    }
+  } catch {
+    // silently fail
+  }
 }
 
 async function loadRecipe() {
   try {
-    const res = await fetch(`https://tastebytes-6498b743cd23.herokuapp.com/recipes/${recipeId}`, { credentials: 'include' });
+    const res = await fetch(`https://tastebytes-6498b743cd23.herokuapp.com/recipes/${recipeId}`);
     const data = await res.json();
     if (!res.ok || !data.recipe) throw new Error();
     showRecipe(data.recipe);
@@ -78,10 +90,15 @@ function escapeHtml(str) {
 }
 
 async function submitRating(recipeId, rating) {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Not logged in");
+
   const res = await fetch(`https://tastebytes-6498b743cd23.herokuapp.com/recipes/${recipeId}/rate`, {
     method: 'POST',
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    },
     body: JSON.stringify({ rating })
   });
   const data = await res.json();

@@ -2,18 +2,27 @@ let recipes = [];
 let userCollection = new Set();
 let isLoggedIn = false;
 let userPlan;
-
 async function checkLogin() {
     try {
-        const res = await fetch('https://tastebytes-6498b743cd23.herokuapp.com/profile', { method: "GET", credentials: "include" });
+        const token = localStorage.getItem("token");
+        if (!token) {
+            isLoggedIn = false;
+            return;
+        }
+
+        const res = await fetch('https://tastebytes-6498b743cd23.herokuapp.com/profile', {
+            method: "GET",
+            headers: { Authorization: `Bearer ${token}` }
+        });
+
         if (res.ok) {
             const data = await res.json();
             isLoggedIn = true;
-            userCollection = new Set(data.user.savedRecipes || []);
-
-            userPlan = data.user.plan || "Free";
+            userCollection = new Set(data.savedRecipes || []);
+            userPlan = data.plan || "Free";
         } else {
             isLoggedIn = false;
+            localStorage.removeItem("token"); // clear invalid token
         }
     } catch {
         isLoggedIn = false;
@@ -22,7 +31,10 @@ async function checkLogin() {
 
 async function loadRecipes() {
     try {
-        const res = await fetch('https://tastebytes-6498b743cd23.herokuapp.com/recipes/', { credentials: 'include' });
+        const token = localStorage.getItem("token");
+        const res = await fetch('https://tastebytes-.../recipes/', {
+            headers: { Authorization: `Bearer ${token}` }
+        });
         const data = await res.json();
         if (res.ok) {
             recipes = data.recipes;
@@ -36,6 +48,7 @@ async function loadRecipes() {
             '<div class="no-results">Network error loading recipes.</div>';
     }
 }
+
 
 function viewRecipe(recipeId) {
     window.location.href = `../pages/view-recipe.html?id=${recipeId}`;
@@ -113,22 +126,30 @@ async function toggleCollection(recipeId) {
     const alreadySaved = userCollection.has(recipeId);
     const endpoint = alreadySaved ? "remove_recipe" : "save_recipe";
 
-    if (!alreadySaved && userPlan == "Free" && userCollection.size >= 5) {
+    if (!alreadySaved && userPlan === "Free" && userCollection.size >= 5) {
         showModal("Free Limit Reached", "You've reached the save limit for Free plan. Please upgrade to Premium for unlimited saves");
         return;
     }
 
-    if (endpoint == "remove_recipe") {
+    if (endpoint === "remove_recipe") {
         showNotification("Removed from saved", 3000);
     } else {
         showNotification("Added to saved collection", 3000);
     }
 
+    const token = localStorage.getItem("token");
+    if (!token) {
+        alert("You must be logged in to save recipes.");
+        return;
+    }
+
     const res = await fetch(`https://tastebytes-6498b743cd23.herokuapp.com/${endpoint}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ recipeId }),
-        credentials: "include"
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ recipeId })
     });
 
     const data = await res.json();
@@ -139,6 +160,7 @@ async function toggleCollection(recipeId) {
         alert("Error: " + data.message);
     }
 }
+
 
 function clearFilters() {
     document.getElementById('typeFilter').value = '';

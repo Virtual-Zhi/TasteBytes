@@ -1,53 +1,38 @@
-const { ObjectId } = require("mongodb");
 const { getDB } = require("../utils/db");
-const { parseCookies } = require("../utils/cookies");
 
 async function handleProfile(req, res) {
+    const db = getDB();
+
     if (req.method === "GET" && req.url === "/profile") {
-        const cookies = parseCookies(req.headers.cookie);
-        const sessionId = cookies.sessionId;
+        const authHeader = req.headers.authorization;
 
-        console.log("Cookie header:", req.headers.cookie);
-        console.log("Parsed sessionId:", sessionId);
-
-
-
-        if (!sessionId) {
-            res.statusCode = 401;
+        if (!authHeader) {
+            res.writeHead(401, { "Content-Type": "application/json" });
             return res.end(JSON.stringify({ message: "Not logged in" }));
         }
 
-        const db = getDB();
-        const session = await db.collection("sessions").findOne({ _id: sessionId });
+        // Expect header like: Authorization: Bearer <token>
+        const token = authHeader.split(" ")[1];
 
-        console.log("Session from DB:", session);
-
-        if (!session || new Date() > session.expiresAt) {
-            res.statusCode = 401;
-            return res.end(JSON.stringify({ message: "Session expired or invalid" }));
+        // Look up session in Mongo
+        const session = await db.collection("sessions").findOne({ _id: token });
+        if (!session) {
+            res.writeHead(401, { "Content-Type": "application/json" });
+            return res.end(JSON.stringify({ message: "Invalid session" }));
         }
 
-        const user = await db.collection("users").findOne({ _id: new ObjectId(session.userId) });
+        // Get user info
+        const user = await db.collection("users").findOne({ _id: session.userId });
         if (!user) {
-            res.statusCode = 404;
+            res.writeHead(404, { "Content-Type": "application/json" });
             return res.end(JSON.stringify({ message: "User not found" }));
         }
 
-        const profileData = {
-            username: user.username,
-            email: user.email,
-            phone: user.phone || "Not provided",
-            plan: user.plan || "Free",
-            savedRecipes: (user.savedRecipes || []).map(id => id.toString()),
-            posts: user.posts,
-        };
-
-        res.setHeader("Content-Type", "application/json");
-        res.end(JSON.stringify({ message: "Profile data", user: profileData }));
-        return true;
+        res.writeHead(200, { "Content-Type": "application/json" });
+        return res.end(JSON.stringify({ username: user.username, email: user.email, plan: user.plan }));
     }
+
     return false;
 }
-
 
 module.exports = { handleProfile };
