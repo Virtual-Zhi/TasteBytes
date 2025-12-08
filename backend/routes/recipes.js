@@ -35,9 +35,21 @@ async function handleRecipes(req, res, sessions) {
         const cookies = parseCookies(req.headers.cookie || "");
         const sessionId = cookies.sessionId;
         const session = sessions[sessionId];
+
+        const user = await db.collection("users").findOne({ _id: new ObjectId(session.id) });
+        const userPlan = user.plan || "Free";
+        const userPostCount = (user.posts || []).length;
+
         if (!session) {
             res.statusCode = 401;
             return res.end(JSON.stringify({ message: "Not logged in" }));
+        }
+
+        if (userPlan === "Free" && userPostCount >= 3) {
+            res.statusCode = 403;
+            return res.end(JSON.stringify({
+                message: "Free users can only post up to 3 recipes. Upgrade to Premium to post more."
+            }));
         }
 
         const form = new formidable.IncomingForm();
@@ -140,7 +152,7 @@ async function handleRecipes(req, res, sessions) {
                             method: "POST",
                             body: new URLSearchParams({ image: base64 })
                         });
-                        
+
                         const imgbbJson = await imgbbRes.json();
                         console.log('ImgBB response', imgbbRes.status, imgbbJson);
 
@@ -155,7 +167,6 @@ async function handleRecipes(req, res, sessions) {
                     }
                 }
 
-
                 const recipe = {
                     title,
                     type,
@@ -165,7 +176,7 @@ async function handleRecipes(req, res, sessions) {
                     tips,
                     imageUrl,
                     rating: { average: 0, count: 0 },
-                    userRatings: {}, // NEW: map of userId → rating
+                    userRatings: {},
                     ownerId: session.id,
                     createdAt: new Date()
                 };
@@ -194,9 +205,21 @@ async function handleRecipes(req, res, sessions) {
     if (req.method === "POST" && req.url === "/save_recipe") {
         const cookies = parseCookies(req.headers.cookie || "");
         const session = sessions[cookies.sessionId];
+
+        const user = await db.collection("users").findOne({ _id: new ObjectId(session.id) });
+        const userPlan = user.plan || "Free";
+        const savedCount = (user.savedRecipes || []).length;
+
         if (!session) {
             res.statusCode = 401;
             return res.end(JSON.stringify({ message: "Not logged in" }));
+        }
+
+        if (userPlan === "Free" && savedCount >= 5) {
+            res.statusCode = 403;
+            return res.end(JSON.stringify({
+                message: "Free users can save up to 5 recipes. Upgrade to Premium to save more."
+            }));
         }
 
         let body = "";
