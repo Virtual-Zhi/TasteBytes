@@ -4,10 +4,10 @@ const { OAuth2Client } = require("google-auth-library");
 
 // I know this is not secure, but this is just for our class purposes
 const client = new OAuth2Client(
-  "261255118602-r5igalkpb2q6oe2jo5lp1td3uas6v11r.apps.googleusercontent.com",
-  "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"
+    "261255118602-r5igalkpb2q6oe2jo5lp1td3uas6v11r.apps.googleusercontent.com",
+    "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"
 );
- 
+
 
 
 async function handleAuth(req, res, sessions) {
@@ -67,7 +67,8 @@ async function handleAuth(req, res, sessions) {
                 const sessionId = user._id.toString();
                 sessions[sessionId] = { id: user._id.toString(), username: user.username };
 
-                res.setHeader("Set-Cookie", `sessionId=${sessionId}; HttpOnly; Path=/`);
+                const cookieValue = `sessionId=${sessionId}; HttpOnly; Path=/; SameSite=None; Secure; Max-Age=${60 * 60 * 24 * 7}`;
+                res.setHeader('Set-Cookie', cookieValue);
                 res.end(JSON.stringify({ message: "Login successful!", username: user.username }));
             } catch (err) {
                 console.error("Login error:", err);
@@ -83,48 +84,48 @@ async function handleAuth(req, res, sessions) {
         req.on("data", chunk => body += chunk);
         req.on("end", async () => {
             try {
-            const { code } = JSON.parse(body);
+                const { code } = JSON.parse(body);
 
-            // Exchange code for tokens
-            const { tokens } = await client.getToken({ code, redirect_uri: "postmessage", });
+                // Exchange code for tokens
+                const { tokens } = await client.getToken({ code, redirect_uri: "postmessage", });
 
-            // Verify ID token
-            const ticket = await client.verifyIdToken({
-                idToken: tokens.id_token,
-                audience: "261255118602-r5igalkpb2q6oe2jo5lp1td3uas6v11r.apps.googleusercontent.com",
-            });
-
-            const payload = ticket.getPayload();
-            const email = payload.email;
-            const name = payload.name;
-
-            // Check if user exists
-            let user = await db.collection("users").findOne({ email });
-            if (!user) {
-                const result = await db.collection("users").insertOne({
-                username: name,
-                email: email,
-                phone: null,
-                plan: "Free",
-                password: null,
-                posts: [],
-                savedRecipes: [],
-                createdAt: new Date(),
-                lastLogin: new Date(),
+                // Verify ID token
+                const ticket = await client.verifyIdToken({
+                    idToken: tokens.id_token,
+                    audience: "261255118602-r5igalkpb2q6oe2jo5lp1td3uas6v11r.apps.googleusercontent.com",
                 });
-                user = await db.collection("users").findOne({ _id: result.insertedId });
-            }
 
-            // Create session
-            const sessionId = user._id.toString();
-            sessions[sessionId] = { id: user._id.toString(), username: user.username };
+                const payload = ticket.getPayload();
+                const email = payload.email;
+                const name = payload.name;
 
-            res.setHeader("Set-Cookie", `sessionId=${sessionId}; HttpOnly; Path=/`);
-            res.end(JSON.stringify({ message: "Google login successful!", username: user.username }));
+                // Check if user exists
+                let user = await db.collection("users").findOne({ email });
+                if (!user) {
+                    const result = await db.collection("users").insertOne({
+                        username: name,
+                        email: email,
+                        phone: null,
+                        plan: "Free",
+                        password: null,
+                        posts: [],
+                        savedRecipes: [],
+                        createdAt: new Date(),
+                        lastLogin: new Date(),
+                    });
+                    user = await db.collection("users").findOne({ _id: result.insertedId });
+                }
+
+                // Create session
+                const sessionId = user._id.toString();
+                sessions[sessionId] = { id: user._id.toString(), username: user.username };
+
+                res.setHeader('Set-Cookie', 'sessionId=; HttpOnly; Path=/; SameSite=None; Secure; Max-Age=0');
+                res.end(JSON.stringify({ message: "Google login successful!", username: user.username }));
             } catch (err) {
-            console.error("Google login error:", err);
-            res.statusCode = 400;
-            res.end(JSON.stringify({ message: "Google login failed", error: err.message }));
+                console.error("Google login error:", err);
+                res.statusCode = 400;
+                res.end(JSON.stringify({ message: "Google login failed", error: err.message }));
             }
         });
         return true;
