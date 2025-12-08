@@ -1,6 +1,7 @@
 let recipes = [];
 let userCollection = new Set();
 let isLoggedIn = false;
+let userPlan;
 
 async function checkLogin() {
     try {
@@ -13,6 +14,8 @@ async function checkLogin() {
             isLoggedIn = true;
 
             userCollection = new Set(data.user.savedRecipes || []);
+
+            userPlan = data.user.plan || "Free";
         } else {
             isLoggedIn = false;
         }
@@ -115,6 +118,11 @@ function filterRecipes() {
 async function toggleCollection(recipeId) {
     const alreadySaved = userCollection.has(recipeId);
     const endpoint = alreadySaved ? "remove_recipe" : "save_recipe";
+
+    if(!alreadySaved && userPlan == "Free" && userCollection.size >= 5){
+        alert("You've reached the save limit for Free plan. Please upgrade to Premium for unlimited saves");
+        return;
+    }
 
     const res = await fetch(`http://localhost:8080/${endpoint}`, {
         method: "POST",

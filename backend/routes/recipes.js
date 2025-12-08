@@ -15,6 +15,17 @@ async function handleRecipes(req, res, sessions) {
             return res.end(JSON.stringify({ message: "Not logged in" }));
         }
 
+        const user = await db.collection("users").findOne({ _id: new ObjectId(session.id) });
+        const userPlan = user.plan || "Free";
+        const userPostCount = (user.posts || []).length;
+
+        if (userPlan === "Free" && userPostCount >= 3) {
+            res.statusCode = 403; 
+            return res.end(JSON.stringify({
+                message: "Free users can only post up to 3 recipes. Upgrade to Premium to post more."
+            }));
+        }
+
         let body = "";
         req.on("data", chunk => body += chunk);
         req.on("end", async () => {
@@ -74,6 +85,20 @@ async function handleRecipes(req, res, sessions) {
             res.statusCode = 401;
             return res.end(JSON.stringify({ message: "Not logged in" }));
         }
+
+
+        
+        const user = await db.collection("users").findOne({ _id: new ObjectId(session.id) });
+        const userPlan = user.plan || "Free";
+        const savedCount = (user.savedRecipes || []).length;
+
+        if (userPlan === "Free" && savedCount >= 5) {
+            res.statusCode = 403; 
+            return res.end(JSON.stringify({
+                message: "Free users can save up to 5 recipes. Upgrade to Premium to save more."
+            }));
+        }
+        
 
         let body = "";
         req.on("data", chunk => body += chunk);
