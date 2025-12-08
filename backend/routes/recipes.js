@@ -3,22 +3,32 @@ const { getDB } = require("../utils/db");
 const formidable = require("formidable");
 const fs = require("fs");
 
+// Replace with your actual key
 const IMGBB_KEY = "58098efae051b42389b204fe4a5f7561";
 
+/**
+ * Parse JSON body
+ */
 async function getBody(req) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         let body = "";
-        req.on("data", c => body += c);
+        req.on("data", (c) => (body += c));
         req.on("end", () => {
-            try { resolve(JSON.parse(body || "{}")); }
-            catch (e) { reject(e); }
+            try {
+                resolve(JSON.parse(body || "{}"));
+            } catch {
+                resolve({});
+            }
         });
     });
 }
 
+/**
+ * Get session from Authorization: Bearer <token>
+ */
 async function getSession(req, db) {
     const h = req.headers.authorization;
-    if (!h) return null;
+    if (!h || !h.startsWith("Bearer ")) return null;
     const token = h.split(" ")[1];
     return await db.collection("sessions").findOne({ _id: token });
 }
@@ -26,149 +36,273 @@ async function getSession(req, db) {
 async function handleRecipes(req, res) {
     const db = getDB();
 
-    // POST /post_recipe
+    // ---------------- POST /post_recipe ----------------
     if (req.method === "POST" && req.url === "/post_recipe") {
         const session = await getSession(req, db);
-        if (!session) return res.end(JSON.stringify({ message: "Not logged in" }));
+        res.setHeader("Content-Type", "application/json");
+
+        if (!session) {
+            res.statusCode = 401;
+            return res.end(JSON.stringify({ message: "Not logged in" }));
+        }
 
         const user = await db.collection("users").findOne({ _id: session.userId });
+        if (!user) {
+            res.statusCode = 404;
+            return res.end(JSON.stringify({ message: "User not found" }));
+        }
+
         if (user.plan === "Free" && (user.posts || []).length >= 3) {
             res.statusCode = 403;
             return res.end(JSON.stringify({ message: "Free users can only post 3 recipes" }));
         }
 
         const form = new formidable.IncomingForm();
+
         form.parse(req, async (err, fields, files) => {
-            if (err) return res.end(JSON.stringify({ message: "Invalid form" }));
-
-            const title = (fields.title || "").trim();
-            const instructions = (fields.instructions || "").trim();
-            const ingredients = JSON.parse(fields.ingredients || "[]");
-            if (!title || !instructions || !ingredients.length)
-                return res.end(JSON.stringify({ message: "Missing fields" }));
-
-            let imageUrl = fields.imageUrl || null;
-            if (!imageUrl && files.image) {
-                const file = Array.isArray(files.image) ? files.image[0] : files.image;
-                const imgPath = file.filepath || file.path;
-                const base64 = fs.readFileSync(imgPath, "base64");
-                const r = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {
-                    method: "POST", body: new URLSearchParams({ image: base64 })
-                });
-                const j = await r.json();
-                imageUrl = j.data?.url;
+            if (err) {
+                res.statusCode = 400;
+                return res.end(JSON.stringify({ message: "Invalid form" }));
             }
 
-            const recipe = {
-                title, instructions, ingredients, imageUrl,
+            const title = String(fields.title || "").trim();
+            const type = String(fields.type || "").trim();
+            const instructions = String(fields.instructions || "").trim();
+            let ingredients = [];
+
+            try {
+                ingredients = JSON.parse(fields.ingredients || "[]");
+                if (!Array.isArray(ingredients)) ingredients = [];
+            } catch {
+                ingredients = [];
+            }
+
+            if (!title || !instructions || ingredients.length === 0) {
+                res.statusCode = 400;
+                return res.end(JSON.stringify({ message: "Missing fields" }));
+            }
+
+            // Optional: upload image to imgbb if file provided
+            let imageUrl = fields.imageUrl || null;
+            try {
+                const file = Array.isArray(files.image) ? files.image?.[0] : files.image;
+                if (!imageUrl && file) {
+                    const imgPath = file.filepath || file.path;
+                    const base64 = fs.readFileSync(imgPath, "base64");
+                    const r = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {
+                        method: "POST",
+                        body: new URLSearchParams({ image: base64 }),
+                    });
+                    const j = await r.json();
+                    imageUrl = j?.data?.url || null;
+                }
+            } catch {
+                // If upload fails, keep imageUrl as null (do not crash)
+                imageUrl = imageUrl || null;
+            }
+
+            const recipeDoc = {
+                title,
+                type,
+                instructions,
+                ingredients,
+                imageUrl,
+                prepTime: Number(fields.prepTime) || 0,
                 rating: { average: 0, count: 0 },
-                userRatings: {}, ownerId: session.userId, createdAt: new Date()
+                userRatings: {},
+                ownerId: session.userId,
+                createdAt: new Date(),
             };
-            const result = await db.collection("recipes").insertOne(recipe);
-            recipe._id = result.insertedId;
-            await db.collection("users").updateOne({ _id: session.userId }, { $push: { posts: recipe._id } });
-            res.end(JSON.stringify({ message: "Recipe posted", recipe }));
+
+            const result = await db.collection("recipes").insertOne(recipeDoc);
+            const insertedRecipe = { ...recipeDoc, _id: result.insertedId };
+
+            // push to user's posts
+            await db.collection("users").updateOne(
+                { _id: session.userId },
+                { $push: { posts: insertedRecipe._id } }
+            );
+
+            // Normalize return types for frontend
+            insertedRecipe._id = insertedRecipe._id.toString();
+            insertedRecipe.ownerId = insertedRecipe.ownerId.toString();
+
+            res.statusCode = 201;
+            return res.end(JSON.stringify({ message: "Recipe posted", recipe: insertedRecipe }));
         });
+
         return true;
     }
 
-    // GET /recipes or /recipes/:id
+    // ---------------- GET /recipes (all) or /recipes/:id (single) ----------------
     if (req.method === "GET" && req.url.startsWith("/recipes")) {
         const parts = req.url.split("/").filter(Boolean);
+        res.setHeader("Content-Type", "application/json");
 
-        // All recipes
+        // GET /recipes → return all recipes with ownerName
         if (parts.length === 1) {
             const recipes = await db.collection("recipes").find().toArray();
-            const ownerIds = recipes.map(r => r.ownerId).filter(id => ObjectId.isValid(id)).map(id => new ObjectId(id));
-            const owners = ownerIds.length
-                ? await db.collection("users").find({ _id: { $in: ownerIds } }, { projection: { username: 1 } }).toArray()
-                : [];
-            const ownerMap = {};
-            owners.forEach(u => { ownerMap[u._id.toString()] = u.username; });
 
-            recipes.forEach(r => {
+            const ownerIds = recipes
+                .map((r) => r.ownerId)
+                .filter((id) => id && ObjectId.isValid(id))
+                .map((id) => new ObjectId(id));
+
+            const owners =
+                ownerIds.length > 0
+                    ? await db
+                        .collection("users")
+                        .find({ _id: { $in: ownerIds } }, { projection: { username: 1 } })
+                        .toArray()
+                    : [];
+
+            const ownerMap = {};
+            owners.forEach((u) => {
+                ownerMap[u._id.toString()] = u.username;
+            });
+
+            recipes.forEach((r) => {
                 r._id = r._id.toString();
                 if (r.ownerId && ObjectId.isValid(r.ownerId)) {
                     r.ownerId = r.ownerId.toString();
                     r.ownerName = ownerMap[r.ownerId] || "Unknown";
+                } else {
+                    r.ownerName = "Unknown";
                 }
             });
+
             return res.end(JSON.stringify({ recipes }));
         }
 
-        // Single recipe
+        // GET /recipes/:id → return single recipe with ownerName and userRating
         if (parts.length === 2) {
             const id = parts[1];
-            const recipe = await db.collection("recipes").findOne({ _id: new ObjectId(id) });
-            if (!recipe) return res.end(JSON.stringify({ message: "Not found" }));
 
-            recipe._id = recipe._id.toString();
+            if (!ObjectId.isValid(id)) {
+                res.statusCode = 400;
+                return res.end(JSON.stringify({ message: "Invalid recipe ID" }));
+            }
+
+            const recipe = await db.collection("recipes").findOne({ _id: new ObjectId(id) });
+            if (!recipe) {
+                res.statusCode = 404;
+                return res.end(JSON.stringify({ message: "Not found" }));
+            }
+
+            // ownerName
             if (recipe.ownerId && ObjectId.isValid(recipe.ownerId)) {
-                const owner = await db.collection("users").findOne({ _id: new ObjectId(recipe.ownerId) }, { projection: { username: 1 } });
+                const owner = await db
+                    .collection("users")
+                    .findOne({ _id: new ObjectId(recipe.ownerId) }, { projection: { username: 1 } });
                 recipe.ownerId = recipe.ownerId.toString();
                 recipe.ownerName = owner?.username || "Unknown";
+            } else {
+                recipe.ownerName = "Unknown";
             }
 
-            // attach userRating if logged in
+            recipe._id = recipe._id.toString();
+
+            // Attach userRating if logged in
             const session = await getSession(req, db);
-            let userRating = null;
-            if (session) {
-                userRating = recipe.userRatings?.[session.userId] || null;
-            }
+            const userRating = session ? recipe.userRatings?.[session.userId] || null : null;
 
             return res.end(JSON.stringify({ recipe, userRating }));
         }
     }
 
-    // POST /recipes/:id/rate
+    // ---------------- POST /recipes/:id/rate ----------------
     if (req.method === "POST" && req.url.startsWith("/recipes/") && req.url.endsWith("/rate")) {
+        res.setHeader("Content-Type", "application/json");
         const session = await getSession(req, db);
-        if (!session) return res.end(JSON.stringify({ message: "Login required" }));
-        const id = req.url.split("/")[2];
+        if (!session) {
+            res.statusCode = 401;
+            return res.end(JSON.stringify({ message: "Login required" }));
+        }
+
+        const parts = req.url.split("/").filter(Boolean); // ["recipes", ":id", "rate"]
+        const id = parts[1];
+
+        if (!ObjectId.isValid(id)) {
+            res.statusCode = 400;
+            return res.end(JSON.stringify({ message: "Invalid recipe ID" }));
+        }
+
         const { rating } = await getBody(req);
-        if (!rating || rating < 1 || rating > 5)
+        const parsed = Number(rating);
+        if (!parsed || parsed < 1 || parsed > 5) {
+            res.statusCode = 400;
             return res.end(JSON.stringify({ message: "Invalid rating" }));
+        }
 
         const recipe = await db.collection("recipes").findOne({ _id: new ObjectId(id) });
-        if (!recipe) return res.end(JSON.stringify({ message: "Recipe not found" }));
+        if (!recipe) {
+            res.statusCode = 404;
+            return res.end(JSON.stringify({ message: "Recipe not found" }));
+        }
 
         recipe.userRatings = recipe.userRatings || {};
-        recipe.userRatings[session.userId] = rating;
+        recipe.userRatings[session.userId] = parsed;
+
         const ratings = Object.values(recipe.userRatings);
         const avg = ratings.reduce((a, b) => a + b, 0) / ratings.length;
-        const updated = { average: avg, count: ratings.length };
+        const updatedRating = { average: avg, count: ratings.length };
 
         await db.collection("recipes").updateOne(
             { _id: new ObjectId(id) },
-            { $set: { rating: updated, userRatings: recipe.userRatings } }
+            { $set: { rating: updatedRating, userRatings: recipe.userRatings } }
         );
-        return res.end(JSON.stringify({ message: "Rating saved", rating: updated, userRating: rating }));
+
+        res.statusCode = 200;
+        return res.end(JSON.stringify({ message: "Rating saved", rating: updatedRating, userRating: parsed }));
     }
 
-    // POST /save_recipe
+    // ---------------- POST /save_recipe ----------------
     if (req.method === "POST" && req.url === "/save_recipe") {
+        res.setHeader("Content-Type", "application/json");
         const session = await getSession(req, db);
-        if (!session) return res.end(JSON.stringify({ message: "Not logged in" }));
+        if (!session) {
+            res.statusCode = 401;
+            return res.end(JSON.stringify({ message: "Not logged in" }));
+        }
+
         const { recipeId } = await getBody(req);
+        if (!recipeId || !ObjectId.isValid(recipeId)) {
+            res.statusCode = 400;
+            return res.end(JSON.stringify({ message: "Invalid recipe ID" }));
+        }
+
         await db.collection("users").updateOne(
             { _id: session.userId },
             { $addToSet: { savedRecipes: new ObjectId(recipeId) } }
         );
+
+        res.statusCode = 200;
         return res.end(JSON.stringify({ message: "Recipe saved" }));
     }
 
-    // POST /remove_recipe
+    // ---------------- POST /remove_recipe ----------------
     if (req.method === "POST" && req.url === "/remove_recipe") {
+        res.setHeader("Content-Type", "application/json");
         const session = await getSession(req, db);
-        if (!session) return res.end(JSON.stringify({ message: "Not logged in" }));
+        if (!session) {
+            res.statusCode = 401;
+            return res.end(JSON.stringify({ message: "Not logged in" }));
+        }
+
         const { recipeId } = await getBody(req);
+        if (!recipeId || !ObjectId.isValid(recipeId)) {
+            res.statusCode = 400;
+            return res.end(JSON.stringify({ message: "Invalid recipe ID" }));
+        }
+
         await db.collection("users").updateOne(
             { _id: session.userId },
             { $pull: { savedRecipes: new ObjectId(recipeId) } }
         );
+
+        res.statusCode = 200;
         return res.end(JSON.stringify({ message: "Recipe removed" }));
     }
-
 
     return false;
 }
