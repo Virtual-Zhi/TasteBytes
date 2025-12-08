@@ -7,6 +7,8 @@ async function handleProfile(req, res) {
         const cookies = parseCookies(req.headers.cookie);
         const sessionId = cookies.sessionId;
 
+        console.log("Cookie header:", req.headers.cookie);
+
         if (!sessionId) {
             res.statusCode = 401;
             return res.end(JSON.stringify({ message: "Not logged in" }));

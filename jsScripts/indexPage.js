@@ -85,7 +85,7 @@ function renderFeatured(items) {
     }
 
     grid.innerHTML = items.map(r => {
-        const img = r.imageUrl || "../images/homePage.jpg";
+        const img = r.imageUrl || "./images/homePage.jpg";
         const title = r.title || "Untitled";
         const ingredients = shortIngredients(r.ingredients, 3);
         const instrPreview = shortText(r.instructions || "", 18);

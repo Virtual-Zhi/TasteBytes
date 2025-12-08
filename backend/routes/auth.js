@@ -105,7 +105,7 @@ async function handleAuth(req, res, sessions) {
                 // Verify ID token
                 const ticket = await client.verifyIdToken({
                     idToken: tokens.id_token,
-                    audience: "YOUR_GOOGLE_CLIENT_ID",
+                    audience: "261255118602-r5igalkpb2q6oe2jo5lp1td3uas6v11r.apps.googleusercontent.com",
                 });
 
                 const payload = ticket.getPayload();
