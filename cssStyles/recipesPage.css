@@ -26,6 +26,48 @@ h2 {
     margin-bottom: 1rem;
 }
 
+.simple-search {
+    display: flex;
+    gap: 8px;
+    margin: 12px 0;
+}
+
+.simple-search input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.simple-search button {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    background-color: #f44336;
+    color: white;
+    cursor: pointer;
+}
+
+.simple-search button:hover {
+    background: #da190b;
+}
+
+.recipe-image {
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+    border-radius: 8px 8px 0 0;
+    background: #f6f6f6;
+}
+
+.recipe-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -54,16 +96,25 @@ h2 {
 .filter-group select,
 .filter-group input {
     width: 100%;
+    box-sizing: border-box;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 14px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+    border-color: #ee5a24;
+    box-shadow: 0 0 5px rgba(238, 90, 36, 0.3);
+    outline: none;
 }
 
 .filter-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
+    gap: 10px;
 }
 
 .recipes-grid {
@@ -107,7 +158,7 @@ h2 {
         padding: 8rem 2rem;
         background-position: center -50px;
     }
-    
+
     .recipes-grid {
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     }
@@ -118,7 +169,7 @@ h2 {
         padding: 8rem 2rem;
         background-position: center 0px;
     }
-    
+
     h1 {
         font-size: 2rem;
     }
@@ -128,7 +179,7 @@ h2 {
     .recipes-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .filter-row {
         grid-template-columns: 1fr;
     }

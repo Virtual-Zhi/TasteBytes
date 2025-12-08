@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Recipe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .recipe-header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .recipe-header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .recipe-type {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        #imageContainer {
+            padding: 15px;
+        }
+
+        .recipe-image {
+            width: 95%;
+            height: 400px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .recipe-content {
+            padding: 40px;
+        }
+
+        .prep-time {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .prep-time span {
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+
+        .section {
+            margin-bottom: 35px;
+        }
+
+        .section h2 {
+            color: #333;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            border-bottom: 3px solid #ff6b6b;
+            padding-bottom: 10px;
+        }
+
+        .ingredients-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .ingredients-list li {
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-left: 4px solid #ff6b6b;
+            border-radius: 5px;
+            transition: transform 0.2s;
+        }
+
+        /* .ingredients-list li:hover {
+            transform: translateX(5px);
+            background: #e9ecef;
+        } */
+
+        .instructions {
+            line-height: 1.8;
+            color: #555;
+            font-size: 1.05em;
+            white-space: pre-wrap;
+        }
+
+        .rating-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .rating-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .stars {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .star {
+            font-size: 2.5em;
+            cursor: pointer;
+            color: #ddd;
+            transition: all 0.2s;
+        }
+
+        .star:hover,
+        .star.active {
+            color: #ffc107;
+            transform: scale(1.1);
+        }
+
+        .rating-display {
+            font-size: 1.1em;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin: 30px 40px;
+            padding: 12px 30px;
+            background: #ff6b6b;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .back-button:hover {
+            background: #ee5a52;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .no-image {
+            height: 400px;
+            background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            color: #adb5bd;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="recipe-header">
+            <h1 id="recipeName">Recipe Name</h1>
+            <span class="recipe-type" id="recipeType">Type</span>
+        </div>
+
+        <div id="imageContainer"></div>
+
+        <div class="recipe-content">
+            <div class="prep-time">
+                <!-- displays prep time -->
+                ⏱️ Prep Time: <span id="prepTime">0</span> minutes
+            </div>
+
+            <div class="section">
+                <!-- displays ingrediants -->
+                <h2>🥘 Ingredients</h2>
+                <ul class="ingredients-list" id="ingredientsList"></ul>
+            </div>
+
+            <div class="section">
+                <!-- displays instructions -->
+                <h2>📝 Instructions</h2>
+                <div class="instructions" id="instructions">No instructions provided.</div>
+            </div>
+
+            <div class="rating-section">
+                <!--  allows users to rate the recipe out of 5 stars -->
+                <h3>Rate This Recipe</h3>
+                <div class="stars" id="stars">
+                    <!-- creates stars 1-5 -->
+                    <span class="star" data-rating="1">★</span>
+                    <span class="star" data-rating="2">★</span>
+                    <span class="star" data-rating="3">★</span>
+                    <span class="star" data-rating="4">★</span>
+                    <span class="star" data-rating="5">★</span>
+                </div>
+                <div class="rating-display" id="ratingDisplay">Click a star to rate</div>
+            </div>
+        </div>
+
+        <a href="#" class="back-button" onclick="window.history.back(); return false;">← Back</a>
+    </div>
+
+    <script src="../jsScripts/viewRecipe.js"></script>
+</body>
+
+</html>
