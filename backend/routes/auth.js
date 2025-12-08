@@ -104,7 +104,7 @@ async function handleAuth(req, res) {
                 // Exchange code for tokens
                 const { tokens } = await client.getToken({
                     code,
-                    redirect_uri: "https://tastebytes-6498b743cd23.herokuapp.com/google_login/callback"
+                    redirect_uri: "postmessage"
                 });
 
                 // Verify ID token
