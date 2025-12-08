@@ -70,6 +70,12 @@ async function submitRecipe() {
             });
 
             const data = await res.json();
+
+            if (res.status == 403) {
+                alert(data.message);
+                return;
+            }
+
             if (res.ok) {
                 alert('Recipe posted successfully!');
                 form.reset();

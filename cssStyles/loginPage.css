@@ -72,6 +72,32 @@ button:hover {
     background: #d7263d;
     transform: scale(1.03);
 }
+.google-btn {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.7rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    background: white;
+    color: #d7263d;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+.google-btn:hover{
+    background: white;
+}
+
+.google-btn img {
+    width: 18px;
+    height: 18px;
+}
 
 /* Toggle links */
 .toggle-link {
