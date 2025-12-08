@@ -91,7 +91,7 @@ const client = google.accounts.oauth2.initCodeClient({
   //redirect_uri: "https://tastebytes-6498b743cd23.herokuapp.com/google_login/callback", // must match backend + Google Console
   callback: (response) => {
     // response.code is the authorization code
-    fetch("https://tastebytes-6498b743cd23.herokuapp.com/google_login", {
+    await fetch("https://tastebytes-6498b743cd23.herokuapp.com/google_login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ code: response.code })
