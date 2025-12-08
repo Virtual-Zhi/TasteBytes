@@ -8,6 +8,9 @@ async function handleProfile(req, res) {
         const sessionId = cookies.sessionId;
 
         console.log("Cookie header:", req.headers.cookie);
+        console.log("Parsed sessionId:", sessionId);
+
+
 
         if (!sessionId) {
             res.statusCode = 401;
@@ -16,6 +19,8 @@ async function handleProfile(req, res) {
 
         const db = getDB();
         const session = await db.collection("sessions").findOne({ _id: sessionId });
+
+        console.log("Session from DB:", session);
 
         if (!session || new Date() > session.expiresAt) {
             res.statusCode = 401;

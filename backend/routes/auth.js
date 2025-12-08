@@ -69,12 +69,12 @@ async function handleAuth(req, res, sessions) {
 
                 // Store session in Mongo (upsert so it refreshes if already exists)
                 await db.collection("sessions").updateOne(
-                    { _id: sessionId },
+                    { _id: sessionId }, // string, not ObjectId
                     {
                         $set: {
                             userId: user._id,
                             createdAt: new Date(),
-                            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+                            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
                         }
                     },
                     { upsert: true }
@@ -134,16 +134,17 @@ async function handleAuth(req, res, sessions) {
 
                 // Store session in Mongo
                 await db.collection("sessions").updateOne(
-                    { _id: sessionId },
+                    { _id: sessionId }, // string, not ObjectId
                     {
                         $set: {
                             userId: user._id,
                             createdAt: new Date(),
-                            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+                            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
                         }
                     },
                     { upsert: true }
                 );
+
 
                 // Set cookie
                 res.setHeader("Set-Cookie", `sessionId=${sessionId}; HttpOnly; Path=/; SameSite=None; Secure; Max-Age=${60 * 60 * 24 * 7}`);
