@@ -32,8 +32,10 @@ async function handleRecipes(req, res) {
         if (!session) return res.end(JSON.stringify({ message: "Not logged in" }));
 
         const user = await db.collection("users").findOne({ _id: session.userId });
-        if (user.plan === "Free" && (user.posts || []).length >= 3)
+        if (user.plan === "Free" && (user.posts || []).length >= 3) {
+            res.statusCode = 403;
             return res.end(JSON.stringify({ message: "Free users can only post 3 recipes" }));
+        }
 
         const form = new formidable.IncomingForm();
         form.parse(req, async (err, fields, files) => {
@@ -70,55 +72,20 @@ async function handleRecipes(req, res) {
         return true;
     }
 
-    // POST /save_recipe
-    if (req.method === "POST" && req.url === "/save_recipe") {
-        const session = await getSession(req, db);
-        if (!session) return res.end(JSON.stringify({ message: "Not logged in" }));
-        const { recipeId } = await getBody(req);
-        await db.collection("users").updateOne(
-            { _id: session.userId },
-            { $addToSet: { savedRecipes: new ObjectId(recipeId) } }
-        );
-        return res.end(JSON.stringify({ message: "Recipe saved" }));
-    }
-
-    // POST /remove_recipe
-    if (req.method === "POST" && req.url === "/remove_recipe") {
-        const session = await getSession(req, db);
-        if (!session) return res.end(JSON.stringify({ message: "Not logged in" }));
-        const { recipeId } = await getBody(req);
-        await db.collection("users").updateOne(
-            { _id: session.userId },
-            { $pull: { savedRecipes: new ObjectId(recipeId) } }
-        );
-        return res.end(JSON.stringify({ message: "Recipe removed" }));
-    }
-
     // GET /recipes or /recipes/:id
     if (req.method === "GET" && req.url.startsWith("/recipes")) {
         const parts = req.url.split("/").filter(Boolean);
 
-        // GET /recipes → all recipes
+        // All recipes
         if (parts.length === 1) {
             const recipes = await db.collection("recipes").find().toArray();
-
-            // collect ownerIds
-            const ownerIds = recipes
-                .map(r => r.ownerId)
-                .filter(id => id && ObjectId.isValid(id))
-                .map(id => new ObjectId(id));
-
-            // fetch owners
+            const ownerIds = recipes.map(r => r.ownerId).filter(id => ObjectId.isValid(id)).map(id => new ObjectId(id));
             const owners = ownerIds.length
-                ? await db.collection("users")
-                    .find({ _id: { $in: ownerIds } }, { projection: { username: 1 } })
-                    .toArray()
+                ? await db.collection("users").find({ _id: { $in: ownerIds } }, { projection: { username: 1 } }).toArray()
                 : [];
-
             const ownerMap = {};
             owners.forEach(u => { ownerMap[u._id.toString()] = u.username; });
 
-            // attach ownerName
             recipes.forEach(r => {
                 r._id = r._id.toString();
                 if (r.ownerId && ObjectId.isValid(r.ownerId)) {
@@ -126,32 +93,32 @@ async function handleRecipes(req, res) {
                     r.ownerName = ownerMap[r.ownerId] || "Unknown";
                 }
             });
-
             return res.end(JSON.stringify({ recipes }));
         }
 
-        // GET /recipes/:id → single recipe
+        // Single recipe
         if (parts.length === 2) {
             const id = parts[1];
             const recipe = await db.collection("recipes").findOne({ _id: new ObjectId(id) });
             if (!recipe) return res.end(JSON.stringify({ message: "Not found" }));
 
             recipe._id = recipe._id.toString();
-
-            // attach ownerName for single recipe
             if (recipe.ownerId && ObjectId.isValid(recipe.ownerId)) {
-                const owner = await db.collection("users").findOne(
-                    { _id: new ObjectId(recipe.ownerId) },
-                    { projection: { username: 1 } }
-                );
+                const owner = await db.collection("users").findOne({ _id: new ObjectId(recipe.ownerId) }, { projection: { username: 1 } });
                 recipe.ownerId = recipe.ownerId.toString();
                 recipe.ownerName = owner?.username || "Unknown";
             }
 
-            return res.end(JSON.stringify({ recipe }));
+            // attach userRating if logged in
+            const session = await getSession(req, db);
+            let userRating = null;
+            if (session) {
+                userRating = recipe.userRatings?.[session.userId] || null;
+            }
+
+            return res.end(JSON.stringify({ recipe, userRating }));
         }
     }
-
 
     // POST /recipes/:id/rate
     if (req.method === "POST" && req.url.startsWith("/recipes/") && req.url.endsWith("/rate")) {
@@ -177,6 +144,31 @@ async function handleRecipes(req, res) {
         );
         return res.end(JSON.stringify({ message: "Rating saved", rating: updated, userRating: rating }));
     }
+
+    // POST /save_recipe
+    if (req.method === "POST" && req.url === "/save_recipe") {
+        const session = await getSession(req, db);
+        if (!session) return res.end(JSON.stringify({ message: "Not logged in" }));
+        const { recipeId } = await getBody(req);
+        await db.collection("users").updateOne(
+            { _id: session.userId },
+            { $addToSet: { savedRecipes: new ObjectId(recipeId) } }
+        );
+        return res.end(JSON.stringify({ message: "Recipe saved" }));
+    }
+
+    // POST /remove_recipe
+    if (req.method === "POST" && req.url === "/remove_recipe") {
+        const session = await getSession(req, db);
+        if (!session) return res.end(JSON.stringify({ message: "Not logged in" }));
+        const { recipeId } = await getBody(req);
+        await db.collection("users").updateOne(
+            { _id: session.userId },
+            { $pull: { savedRecipes: new ObjectId(recipeId) } }
+        );
+        return res.end(JSON.stringify({ message: "Recipe removed" }));
+    }
+
 
     return false;
 }

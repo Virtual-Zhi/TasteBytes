@@ -30,13 +30,14 @@ async function loadAccount() {
     }
 }
 
-
 async function loadAllRecipes() {
     try {
-        const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/recipes", { credentials: "include" });
+        const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/recipes");
         const data = await res.json();
         if (res.ok) allRecipes = data.recipes;
-    } catch { }
+    } catch (err) {
+        console.error("Error loading recipes:", err);
+    }
 }
 
 function showDashboard(dashboard, dynamic) {
@@ -94,7 +95,12 @@ function initSubmitRecipe() {
 
         try {
             setImageStatus('Uploading image...', 'uploading');
-            const res = await fetch('https://tastebytes-6498b743cd23.herokuapp.com/post_recipe', { method: 'POST', body: fd, credentials: 'include' });
+            const token = localStorage.getItem("token");
+            const res = await fetch('https://tastebytes-6498b743cd23.herokuapp.com/post_recipe', {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${token}` },
+                body: fd
+            });
             const data = await res.json();
             if (res.ok) {
                 setImageStatus('Image uploaded', 'uploaded');

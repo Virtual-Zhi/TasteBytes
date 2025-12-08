@@ -5,40 +5,17 @@ async function handleProfile(req, res) {
 
     if (req.method === "GET" && req.url === "/profile") {
         const authHeader = req.headers.authorization;
-
-        if (!authHeader) {
-            res.writeHead(401, { "Content-Type": "application/json" });
-            return res.end(JSON.stringify({ message: "Not logged in" }));
-        }
-
-        // Expect header like: Authorization: Bearer <token>
+        if (!authHeader) return res.end(JSON.stringify({ message: "Not logged in" }));
         const token = authHeader.split(" ")[1];
-
-        // Look up session in Mongo
         const session = await db.collection("sessions").findOne({ _id: token });
-        if (!session) {
-            res.writeHead(401, { "Content-Type": "application/json" });
-            return res.end(JSON.stringify({ message: "Invalid session" }));
-        }
+        if (!session) return res.end(JSON.stringify({ message: "Invalid session" }));
 
-        // Get user info
         const user = await db.collection("users").findOne({ _id: session.userId });
-        if (!user) {
-            res.writeHead(404, { "Content-Type": "application/json" });
-            return res.end(JSON.stringify({ message: "User not found" }));
-        }
+        if (!user) return res.end(JSON.stringify({ message: "User not found" }));
 
-        res.writeHead(200, { "Content-Type": "application/json" });
-        return res.end(JSON.stringify({
-            username: user.username,
-            email: user.email,
-            phone: user.phone,
-            plan: user.plan,
-            password: user.password,
-            posts: user.posts,
-            savedRecipes: user.savedRecipes
-        }));
-
+        const { createdAt, lastLogin, ...safeUser } = user;
+        safeUser._id = safeUser._id.toString();
+        return res.end(JSON.stringify(safeUser));
     }
 
     return false;

@@ -1,100 +1,87 @@
-let recipes = [];
-let userCollection = new Set();
-let isLoggedIn = false;
-let userPlan;
-async function checkLogin() {
+let profileData = null;
+const recipeId = new URLSearchParams(window.location.search).get('id');
+const stars = document.querySelectorAll('.star');
+const ratingDisplay = document.getElementById('ratingDisplay');
+
+async function loadAccount() {
     try {
         const token = localStorage.getItem("token");
-        if (!token) {
-            isLoggedIn = false;
-            return;
-        }
+        if (!token) return;
 
-        const res = await fetch('https://tastebytes-6498b743cd23.herokuapp.com/profile', {
+        const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/profile", {
             method: "GET",
             headers: { Authorization: `Bearer ${token}` }
         });
-
-        if (res.ok) {
-            const data = await res.json();
-            isLoggedIn = true;
-            userCollection = new Set(data.savedRecipes || []);
-            userPlan = data.plan || "Free";
+        const data = await res.json();
+        if (res.ok && !data.error && data.message !== "Not logged in") {
+            profileData = data;
         } else {
-            isLoggedIn = false;
             localStorage.removeItem("token"); // clear invalid token
         }
     } catch {
-        isLoggedIn = false;
+        // silently fail
     }
 }
 
-async function loadRecipes() {
+async function loadRecipe() {
     try {
         const token = localStorage.getItem("token");
-        const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/recipes", {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const res = await fetch(`https://tastebytes-6498b743cd23.herokuapp.com/recipes/${recipeId}`, { headers });
         const data = await res.json();
-        if (res.ok) {
-            recipes = data.recipes;
-            filterRecipes();
-        } else {
-            document.getElementById('recipesGrid').innerHTML =
-                '<div class="no-results">Error loading recipes.</div>';
-        }
+        if (!res.ok || !data.recipe) throw new Error();
+        showRecipe(data.recipe);
+        setupRating(recipeId, data.recipe.rating, data.userRating);
     } catch {
-        document.getElementById('recipesGrid').innerHTML =
-            '<div class="no-results">Network error loading recipes.</div>';
+        document.getElementById('recipeName').textContent = 'Error loading recipe';
+        document.getElementById('instructions').textContent = 'Please try again later.';
     }
 }
 
+function showRecipe(recipe) {
+    document.getElementById('recipeName').textContent = recipe.title || 'Untitled';
+    document.getElementById('recipeType').textContent = recipe.type || 'Unknown';
+    document.getElementById('prepTime').textContent = recipe.prepTime ?? 0;
 
-function viewRecipe(recipeId) {
-    window.location.href = `../pages/view-recipe.html?id=${recipeId}`;
+    document.getElementById('imageContainer').innerHTML = recipe.imageUrl
+        ? `<img src="${recipe.imageUrl}" alt="${escapeHtml(recipe.title || 'Recipe image')}" class="recipe-image">`
+        : '<div class="no-image">📷</div>';
+
+    document.getElementById('ingredientsList').innerHTML =
+        (recipe.ingredients || []).map(i => `<li>${escapeHtml(i)}</li>`).join('');
+
+    document.getElementById('instructions').textContent =
+        recipe.instructions || recipe.tips || 'No instructions provided.';
 }
 
-function renderRecipes(recipesToShow) {
-    const grid = document.getElementById('recipesGrid');
-    if (!recipesToShow?.length) {
-        grid.innerHTML = '<div class="no-results">No recipes found matching your filters.</div>';
-        return;
+function setupRating(recipeId, ratingObj, userRating) {
+    ratingDisplay.textContent = ratingObj?.count
+        ? `Average: ${Number(ratingObj.average).toFixed(1)} (${ratingObj.count} ratings)`
+        : 'Click a star to rate';
+
+    if (userRating) {
+        updateStars(userRating);
+        ratingDisplay.textContent = `Your rating: ${userRating} ★ — Average: ${Number(ratingObj.average).toFixed(1)} (${ratingObj.count} ratings)`;
     }
 
-    grid.innerHTML = recipesToShow.map(recipe => {
-        const imgSrc = recipe.imageUrl || '../images/homePage.jpg';
-        const avgRating = recipe.rating?.average ? Number(recipe.rating.average).toFixed(1) : "0.0";
-        const ratingCount = recipe.rating?.count || 0;
-        let buttons = `<button class="view-recipe-btn" onclick="viewRecipe('${recipe._id}')">View Recipe</button>`;
-        if (isLoggedIn) {
-            const added = userCollection.has(recipe._id);
-            buttons += `<button class="add-to-collection-btn ${added ? 'added' : ''}" onclick="toggleCollection('${recipe._id}')">
-                ${added ? '✓ In Collection' : '+ Add to Collection'}
-            </button>`;
+    stars.forEach(star => star.onclick = async () => {
+        if (!profileData) {
+            ratingDisplay.textContent = "You must be logged in to rate";
+            return;
         }
+        const rating = +star.dataset.rating;
+        try {
+            const data = await submitRating(recipeId, rating);
+            updateStars(data.userRating);
+            ratingDisplay.textContent = `You rated ${data.userRating} ★ — New average: ${Number(data.rating.average).toFixed(1)} (${data.rating.count} ratings)`;
+        } catch {
+            ratingDisplay.textContent = "Unable to save rating right now.";
+        }
+    });
+}
 
-        return `
-          <div class="recipe-card">
-            <div class="recipe-image">
-              <img src="${imgSrc}" alt="${escapeHtml(recipe.title || 'Recipe image')}" loading="lazy" />
-            </div>
-            <div class="recipe-content">
-              <h2 class="recipe-title">${escapeHtml(recipe.title)}</h2>
-              <span class="recipe-type">${escapeHtml(recipe.type || '')}</span>
-              <div class="recipe-meta">
-                <span>⏱ ${escapeHtml(String(recipe.prepTime || 0))} min</span>
-                <span>⭐ ${avgRating}/5 (${ratingCount} ratings)</span>
-              </div>
-              <div class="recipe-ingredients">
-                <strong>Ingredients:</strong> ${escapeHtml((recipe.ingredients || []).slice(0, 3).join(', '))}${(recipe.ingredients || []).length > 3 ? '…' : ''}
-              </div>
-              <div class="recipe-owner">
-                <p>Made by: ${escapeHtml(recipe.ownerName || recipe.ownerId)}</p>
-              </div>
-              <div class="recipe-actions">${buttons}</div>
-            </div>
-          </div>`;
-    }).join('');
+function updateStars(rating) {
+    stars.forEach((star, i) => star.classList.toggle('active', i < rating));
 }
 
 function escapeHtml(str) {
@@ -104,109 +91,22 @@ function escapeHtml(str) {
         .replace(/'/g, '&#39;');
 }
 
-// Search + filter: name search runs only when includeName is true
-function filterRecipes(includeName = false) {
-    const typeFilter = document.getElementById('typeFilter')?.value || '';
-    const ingredientFilter = (document.getElementById('ingredientFilter')?.value || '').toLowerCase();
-    const timeFilter = document.getElementById('timeFilter')?.value || '';
-    const nameSearch = includeName ? (document.getElementById('pageSearchInput')?.value || '').trim().toLowerCase() : '';
-
-    const filtered = recipes.filter(recipe => {
-        const matchesType = !typeFilter || (recipe.type || '') === typeFilter;
-        const matchesIngredient = !ingredientFilter || (recipe.ingredients || []).some(ing => ing.toLowerCase().includes(ingredientFilter));
-        const matchesTime = !timeFilter || (Number(recipe.prepTime || 0) <= parseInt(timeFilter));
-        const matchesName = !nameSearch || (recipe.title || '').toLowerCase().includes(nameSearch);
-        return matchesType && matchesIngredient && matchesTime && matchesName;
-    });
-
-    renderRecipes(filtered);
-}
-
-async function toggleCollection(recipeId) {
-    const alreadySaved = userCollection.has(recipeId);
-    const endpoint = alreadySaved ? "remove_recipe" : "save_recipe";
-
-    if (!alreadySaved && userPlan === "Free" && userCollection.size >= 5) {
-        showModal("Free Limit Reached", "You've reached the save limit for Free plan. Please upgrade to Premium for unlimited saves");
-        return;
-    }
-
-    if (endpoint === "remove_recipe") {
-        showNotification("Removed from saved", 3000);
-    } else {
-        showNotification("Added to saved collection", 3000);
-    }
-
+async function submitRating(recipeId, rating) {
     const token = localStorage.getItem("token");
-    if (!token) {
-        alert("You must be logged in to save recipes.");
-        return;
-    }
+    if (!token) throw new Error("Not logged in");
 
-    const res = await fetch(`https://tastebytes-6498b743cd23.herokuapp.com/${endpoint}`, {
-        method: "POST",
+    const res = await fetch(`https://tastebytes-6498b743cd23.herokuapp.com/recipes/${recipeId}/rate`, {
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ recipeId })
+        body: JSON.stringify({ rating })
     });
-
     const data = await res.json();
-    if (res.ok) {
-        alreadySaved ? userCollection.delete(recipeId) : userCollection.add(recipeId);
-        filterRecipes();
-    } else {
-        alert("Error: " + data.message);
-    }
+    if (!res.ok) throw new Error();
+    return data; // contains { message, rating, userRating }
 }
 
-
-function clearFilters() {
-    document.getElementById('typeFilter').value = '';
-    document.getElementById('ingredientFilter').value = '';
-    document.getElementById('timeFilter').value = '';
-    const searchInput = document.getElementById('pageSearchInput');
-    if (searchInput) searchInput.value = '';
-    filterRecipes();
-}
-
-const typeEl = document.getElementById('typeFilter');
-const ingEl = document.getElementById('ingredientFilter');
-const timeEl = document.getElementById('timeFilter');
-const searchInput = document.getElementById('pageSearchInput');
-const searchBtn = document.getElementById('pageSearchBtn');
-const clearBtn = document.querySelector('.clear-filters-btn');
-
-if (typeEl)
-    typeEl.addEventListener('change', () => filterRecipes(false));
-if (ingEl)
-    ingEl.addEventListener('input', () => filterRecipes(false));
-if (timeEl)
-    timeEl.addEventListener('input', () => filterRecipes(false));
-
-if (searchBtn) searchBtn.addEventListener('click', () => filterRecipes(true));
-if (clearBtn) clearBtn.addEventListener('click', () => {
-    document.getElementById('typeFilter').value = '';
-    document.getElementById('ingredientFilter').value = '';
-    document.getElementById('timeFilter').value = '';
-    if (searchInput)
-        searchInput.value = '';
-    filterRecipes(false);
-});
-
-async function loader() {
-    await checkLogin();
-    await loadRecipes();
-
-    const params = new URLSearchParams(window.location.search);
-    const q = params.get('q') || '';
-    if (q && searchInput) {
-        searchInput.value = q;
-        filterRecipes(true);
-    } else
-        filterRecipes(false);
-}
-
-loader();
-
+loadAccount();
+loadRecipe();
