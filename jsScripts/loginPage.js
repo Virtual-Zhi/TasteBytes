@@ -36,9 +36,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
             alert("Welcome " + data.username + "!");
             window.history.back();
-            setTimeout(() => {
-                window.location.reload();
-            }, 100);
+            window.location.reload();
         } else {
             alert("Login failed: " + data.message);
         }
@@ -106,9 +104,7 @@ const client = google.accounts.oauth2.initCodeClient({
                 localStorage.setItem("token", data.token);
                 alert("Welcome " + data.username + "!");
                 window.history.back();
-                setTimeout(() => {
-                    window.location.reload();
-                }, 100);
+                window.location.reload();
             } else {
                 alert("Google login failed: " + data.message);
             }
