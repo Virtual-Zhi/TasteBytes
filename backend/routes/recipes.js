@@ -28,7 +28,7 @@ async function getSession(req, db) {
 
 async function handleRecipes(req, res) {
     const db = getDB();
-    
+
     if (req.method === "POST" && req.url === "/post_recipe") {
         const session = await getSession(req, db);
         res.setHeader("Content-Type", "application/json");
@@ -211,7 +211,7 @@ async function handleRecipes(req, res) {
             return res.end(JSON.stringify({ message: "Login required" }));
         }
 
-        const parts = req.url.split("/").filter(Boolean); // ["recipes", ":id", "rate"]
+        const parts = req.url.split("/").filter(Boolean);
         const id = parts[1];
 
         if (!ObjectId.isValid(id)) {
@@ -248,7 +248,6 @@ async function handleRecipes(req, res) {
         return res.end(JSON.stringify({ message: "Rating saved", rating: updatedRating, userRating: parsed }));
     }
 
-    // ---------------- POST /save_recipe ----------------
     if (req.method === "POST" && req.url === "/save_recipe") {
         res.setHeader("Content-Type", "application/json");
         const session = await getSession(req, db);
@@ -272,7 +271,6 @@ async function handleRecipes(req, res) {
         return res.end(JSON.stringify({ message: "Recipe saved" }));
     }
 
-    // ---------------- POST /remove_recipe ----------------
     if (req.method === "POST" && req.url === "/remove_recipe") {
         res.setHeader("Content-Type", "application/json");
         const session = await getSession(req, db);

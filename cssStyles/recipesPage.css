@@ -68,6 +68,20 @@ h2 {
     display: block;
 }
 
+.recipe-ingredients {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    max-width: 100%;
+}
+
+.recipe-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
