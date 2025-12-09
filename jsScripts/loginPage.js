@@ -16,7 +16,6 @@ document.getElementById("showLogin").addEventListener("click", (e) => {
     formTitle.textContent = "Login";
 });
 
-// ---------------- LOGIN ----------------
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = document.getElementById("email").value;
@@ -31,9 +30,8 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
         const data = await res.json();
 
         if (res.ok) {
-            // Save token in localStorage
-            localStorage.setItem("token", data.token);
 
+            localStorage.setItem("token", data.token);
             alert("Welcome " + data.username + "!");
             window.location.href = document.referrer;
         } else {
@@ -44,7 +42,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     }
 });
 
-// ---------------- CREATE ACCOUNT ----------------
+
 document.getElementById("createForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const newUsername = document.getElementById("newUsername").value;
@@ -112,7 +110,6 @@ const client = google.accounts.oauth2.initCodeClient({
 
 });
 
-// Attach to your Google login button(s)
 document.querySelectorAll(".google-btn").forEach(btn => {
     btn.addEventListener("click", () => {
         client.requestCode();

@@ -66,11 +66,6 @@ async function fetchAndRenderHighlights() {
         shuffled.sort((a, b) => b._avg - a._avg);
         const featured = shuffled.slice(0, 3);
         renderFeatured(featured);
-
-        const maxAvg = recipes.reduce((m, r) => Math.max(m, r._avg || 0), 0);
-        const topCandidates = recipes.filter(r => (r._avg || 0) === maxAvg);
-        const spotlight = topCandidates.length ? topCandidates[Math.floor(Math.random() * topCandidates.length)] : (recipes[0] || null);
-        renderSpotlight(spotlight);
     } catch (err) {
         console.error("Error loading highlights:", err);
     }
@@ -103,36 +98,5 @@ function renderFeatured(items) {
     }).join("");
 }
 
-function renderSpotlight(r) {
-    const container = document.querySelector(".spotlight-section .spotlight-card");
-    if (!container) return;
-    if (!r) {
-        container.innerHTML = "<p>No spotlight recipe available.</p>";
-        return;
-    }
-
-    const img = r.imageUrl || "../images/homePage.jpg";
-    const title = r.title || "Untitled";
-    const ingredients = shortIngredients(r.ingredients, 4);
-    const instrPreview = shortText(r.instructions || "", 30);
-    const desc = ingredients || instrPreview;
-
-    container.innerHTML = `
-    <div class="spotlight-image">
-      <img src="${img}" alt="${title}">
-    </div>
-    <h4>${title}</h4>
-    <p class="spotlight-desc">${desc}</p>
-    <button class="recipe-link" onclick="viewRecipe('${r._id}')">View Recipe</button>
-  `;
-}
-
 
 fetchAndRenderHighlights();
-
-const token = localStorage.getItem("token");
-const accountLink = document.getElementById("accountBtn");
-if (token && accountLink) {
-    accountLink.textContent = "View Account";
-    accountLink.setAttribute("href", "./pages/my_account.html");
-}

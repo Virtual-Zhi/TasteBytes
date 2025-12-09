@@ -47,10 +47,9 @@ window.onload = async () => {
     try {
         const token = localStorage.getItem("token");
         if (!token) {
-            // not logged in → show Sign In button
             signinBtn.textContent = "Sign In";
             if (location.pathname.endsWith("index.html") || location.pathname.endsWith("TasteBytes/")) {
-                signinBtn.href = "./pages/login.html";  
+                signinBtn.href = "./pages/login.html";
             } else {
                 signinBtn.href = "login.html";
             }
@@ -70,17 +69,17 @@ window.onload = async () => {
             const profileMenu = document.createElement("div");
             profileMenu.classList.add("dropdown");
 
-            // figure out how deep we are in the folder structure
             const path = window.location.pathname;
             const prefix = path.includes("/pages/") ? "../" : "./";
 
             profileMenu.innerHTML = `
-                <button class="dropbtn">${data.username} ▼</button>
-                <div class="dropdown-content">
-                    <a href="${prefix}pages/my_account.html">Profile</a>
-                    <a href="#" id="logoutBtn">Logout</a>
-                </div>
-            `;
+        <button class="dropbtn">${data.username} ▼</button>
+        <div class="dropdown-content">
+            <a href="${prefix}pages/my_account.html">Profile</a>
+            <a href="${prefix}pages/my_recipes.html">My Recipes</a>
+            <a href="#" id="logoutBtn">Logout</a>
+        </div>
+    `;
 
             navLinks.appendChild(profileMenu);
 
@@ -90,7 +89,7 @@ window.onload = async () => {
                     method: "POST",
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                localStorage.removeItem("token"); // clear token
+                localStorage.removeItem("token");
                 alert("Logged out!");
                 if (location.pathname.endsWith("my_account.html")) {
                     location = "../index.html";

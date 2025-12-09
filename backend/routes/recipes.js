@@ -3,12 +3,8 @@ const { getDB } = require("../utils/db");
 const formidable = require("formidable");
 const fs = require("fs");
 
-// Replace with your actual key
 const IMGBB_KEY = "58098efae051b42389b204fe4a5f7561";
 
-/**
- * Parse JSON body
- */
 async function getBody(req) {
     return new Promise((resolve) => {
         let body = "";
@@ -23,9 +19,6 @@ async function getBody(req) {
     });
 }
 
-/**
- * Get session from Authorization: Bearer <token>
- */
 async function getSession(req, db) {
     const h = req.headers.authorization;
     if (!h || !h.startsWith("Bearer ")) return null;
@@ -36,7 +29,7 @@ async function getSession(req, db) {
 async function handleRecipes(req, res) {
     const db = getDB();
 
-    // ---------------- POST /post_recipe ----------------
+    // Post recipe
     if (req.method === "POST" && req.url === "/post_recipe") {
         const session = await getSession(req, db);
         res.setHeader("Content-Type", "application/json");
@@ -134,12 +127,10 @@ async function handleRecipes(req, res) {
         return true;
     }
 
-    // ---------------- GET /recipes (all) or /recipes/:id (single) ----------------
     if (req.method === "GET" && req.url.startsWith("/recipes")) {
         const parts = req.url.split("/").filter(Boolean);
         res.setHeader("Content-Type", "application/json");
 
-        // GET /recipes → return all recipes with ownerName
         if (parts.length === 1) {
             const recipes = await db.collection("recipes").find().toArray();
 
