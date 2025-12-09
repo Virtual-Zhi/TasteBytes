@@ -1,6 +1,15 @@
 let profileData = null;
 let allRecipes = [];
 
+// Helper to safely parse JSON
+async function safeJson(res) {
+    try {
+        return await res.json();
+    } catch (err) {
+        console.error("Failed to parse JSON:", err);
+        return null;
+    }
+}
 
 async function loadAccount() {
     try {
@@ -11,9 +20,9 @@ async function loadAccount() {
             method: "GET",
             headers: { Authorization: `Bearer ${token}` }
         });
-        const data = await res.json();
+        const data = await safeJson(res);
 
-        if (!res.ok || data.message === "Not logged in") return;
+        if (!res.ok || data?.message === "Not logged in") return;
 
         profileData = data;
 
@@ -25,12 +34,11 @@ async function loadAccount() {
     }
 }
 
-
 async function loadAllRecipes() {
     try {
         const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/recipes");
-        const data = await res.json();
-        if (res.ok) allRecipes = data.recipes;
+        const data = await safeJson(res);
+        if (res.ok && data?.recipes) allRecipes = data.recipes;
     } catch (err) {
         console.error("Error loading recipes:", err);
     }
@@ -62,7 +70,6 @@ function initSubmitRecipe() {
     form.onsubmit = async e => {
         e.preventDefault();
 
-        // Catch every single input
         const title = document.getElementById('recipeName')?.value.trim();
         const type = document.getElementById('recipeType')?.value || "";
         const prepTimeRaw = document.getElementById('prepTime')?.value || "";
@@ -76,7 +83,6 @@ function initSubmitRecipe() {
             alert("Please fill all required fields correctly."); return;
         }
 
-        // Checker for photo (credit: code from google)
         const file = fileInput?.files?.[0];
         if (!file) { alert("A photo is required."); return; }
         if (file.size > 5 * 1024 * 1024) { alert("Image too large."); return; }
@@ -95,13 +101,15 @@ function initSubmitRecipe() {
                 headers: { Authorization: `Bearer ${token}` },
                 body: fd
             });
-            const data = await res.json();
+
+            const data = await safeJson(res);
+
             if (res.ok) {
                 setImageStatus('Image uploaded', 'uploaded');
                 showNotification('Recipe posted successfully!', 3000);
                 form.reset();
                 setTimeout(() => setImageStatus('No image selected', 'no-image'), 1500);
-                if (data.recipe) {
+                if (data?.recipe) {
                     allRecipes.push(data.recipe);
                     profileData?.posts?.push(data.recipe._id);
                 }
@@ -110,7 +118,8 @@ function initSubmitRecipe() {
                 alert(data?.error || data?.message || 'Server error');
                 setImageStatus('Upload failed', 'error');
             }
-        } catch {
+        } catch (err) {
+            console.error("Network error:", err);
             alert('Network error');
             setImageStatus('Network error', 'error');
         }
@@ -139,7 +148,6 @@ function renderMyPosts() {
       <button onclick="viewRecipe('${r._id}')">View Recipe</button>
     </div>`).join("") : "<p>No posts yet.</p>";
 }
-
 
 // get saved
 function renderSavedRecipes() {
@@ -183,4 +191,3 @@ window.addEventListener("load", () => {
     initSubmitRecipe();
     loadAccount();
 });
-
