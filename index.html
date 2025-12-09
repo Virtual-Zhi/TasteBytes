@@ -19,7 +19,7 @@
             <a href="./pages/about.html">About</a>
             <a href="./pages/recipes.html">Recipes</a>
             <a href="./pages/contact.html">Contact</a>
-            <a href="pages/login.html" class="signin-btn">Sign In</a>
+            <a href="../TasteBytes/pages/login.html" class="signin-btn">Sign In</a>
         </div>
         <div class="hamburger" id="hamburger">
             <span></span>
@@ -31,6 +31,7 @@
     <!-- Banner with Search -->
     <section class="title">
         <h1 class="titleCaption">Cook, Share, and Savor</h1>
+        <h2 style="font-size:32px">Instantly find recipies you love</h2>
         <div class="banner-search">
             <input type="text" id="recipeSearch" placeholder="Search recipes..." />
             <button id="searchButton">Search</button>
@@ -40,29 +41,27 @@
 
     <!-- Featured Recipes -->
     <section class="featured-recipes">
-        <div class="section-title">Featured Recipes</div>
+        <div class="section-title">Join us!</div>
+        <div style ="font-size:26px" class="section-title">Create an account to rate recipes, save recipes, and post your own!</div>
         <div class="recipe-grid">
-            <div class="recipe-card">
-                <img src="../images/pumpkin-latte.jpg" alt="Pumpkin Spice Latte">
-                <h4>Pumpkin Spice Latte</h4>
-                <p>Cozy autumn drink with cinnamon and nutmeg.</p>
-                <a href="./htmlPages/recipes.html" class="recipe-link">View Recipe</a>
-            </div>
-            <div class="recipe-card">
-                <img src="../images/lasagna.jpg" alt="Classic Lasagna">
-                <h4>Classic Lasagna</h4>
-                <p>Layers of pasta, rich meat sauce, and creamy cheese.</p>
-                <a href="./htmlPages/recipes.html" class="recipe-link">View Recipe</a>
-            </div>
-            <div class="recipe-card">
-                <img src="../images/roast-turkey.jpg" alt="Holiday Roast Turkey">
-                <h4>Holiday Roast Turkey</h4>
-                <p>Perfect centerpiece for festive gatherings.</p>
-                <a href="./htmlPages/recipes.html" class="recipe-link">View Recipe</a>
-            </div>
+        <a href="./pages/login.html" id="accountBtn" class="recipe-link">Create an Account!</a>
+        
+
         </div>
         <div class="see-all">
-            <a class="see-all-link" href="./htmlPages/recipes.html">See All Recipes</a>
+            <a class="see-all-link" href="./pages/recipes.html">See All Recipes</a>
+        </div>
+    </section>
+
+
+    <!-- Featured Recipes -->
+    <section class="featured-recipes">
+        <div class="section-title">Featured Recipes</div>
+        <div class="recipe-grid">
+
+        </div>
+        <div class="see-all">
+            <a class="see-all-link" href="./pages/recipes.html">See All Recipes</a>
         </div>
     </section>
 
@@ -70,23 +69,6 @@
     <section class="spotlight-section">
         <div class="section-title">Recipe of the Week</div>
         <div class="spotlight-card">
-            <img src="../images/chocolate-cake.jpg" alt="Chocolate Cake">
-            <h4>Decadent Chocolate Cake</h4>
-            <p>Rich, moist, and perfect for celebrations.</p>
-            <a href="./htmlPages/recipes.html" class="recipe-link">View Recipe</a>
-        </div>
-
-        <!-- Button to toggle tips -->
-        <button id="toggleTipsBtn">Show Cooking Tips</button>
-
-        <!-- Hidden tips initially -->
-        <div id="tipsSection" class="tips-section hidden">
-            <div class="section-title">Quick Cooking Tips</div>
-            <ul>
-                <li>Always let meat rest before slicing.</li>
-                <li>Use fresh herbs to elevate flavor.</li>
-                <li>Salt pasta water generously for better taste.</li>
-            </ul>
         </div>
     </section>
 
@@ -95,17 +77,12 @@
         <div class="section-title">Made for Foodies</div>
         <div class="service-grid">
             <div class="service-card">
-                <img src="../images/icon-ingredients.png" alt="Ingredient Spotlight Icon" class="service-icon">
-                <h3>Ingredient Spotlight</h3>
-                <p>Learn how to use unique ingredients and elevate everyday meals.</p>
+                <img src="images/community.png" alt="Ingredient Spotlight Icon" class="service-icon">
+                <h3>Community of Recipes</h3>
+                <p>Learn unique ingredients from others and elevate your meals!</p>
             </div>
             <div class="service-card">
-                <img src="../images/icon-challenge.png" alt="Community Challenge Icon" class="service-icon">
-                <h3>Community Challenges</h3>
-                <p>Join monthly cooking contests and show off your skills.</p>
-            </div>
-            <div class="service-card">
-                <img src="../images/icon-share.png" alt="Share & Inspire Icon" class="service-icon">
+                <img src="images/share.png" alt="Share & Inspire Icon" class="service-icon">
                 <h3>Share & Inspire</h3>
                 <p>Upload your own recipes and photos to inspire fellow foodies.</p>
             </div>
