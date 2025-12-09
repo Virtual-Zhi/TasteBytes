@@ -20,20 +20,27 @@ async function handleProfile(req, res) {
 
     if (req.method === "POST" && req.url === "/get_premium") {
         const authHeader = req.headers.authorization;
-        if (!authHeader) return res.end(JSON.stringify({ message: "Not logged in" }));
+        if (!authHeader) {
+            return res.end(JSON.stringify({ message: "Not logged in" }));
+        }
         const token = authHeader.split(" ")[1];
         const session = await db.collection("sessions").findOne({ _id: token });
-        if (!session) return res.end(JSON.stringify({ message: "Invalid session" }));
+        if (!session) {
+            return res.end(JSON.stringify({ message: "Invalid session" }));
+        }
 
         const user = await db.collection("users").findOne({ _id: session.userId });
-        if (!user) return res.end(JSON.stringify({ message: "User not found" }));
+        if (!user) {
+            return res.end(JSON.stringify({ message: "User not found" }));
+        }
 
         await db.collection("users").updateOne(
             { _id: session.userId },
-            { $push: { plan: "Premium" } }
+            { $set: { plan: "Premium" } }
         );
 
-        return
+        res.writeHead(200, { "Content-Type": "application/json" });
+        return res.end(JSON.stringify({ message: "Premium activated" }));
     }
 
     return false;
