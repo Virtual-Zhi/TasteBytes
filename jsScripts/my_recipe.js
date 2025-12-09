@@ -1,7 +1,30 @@
-// my_recipe.js
-
 let profileData = null;
 let allRecipes = [];
+
+
+async function loadAccount() {
+    try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/profile", {
+            method: "GET",
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        if (!res.ok || data.message === "Not logged in") return;
+
+        profileData = data;
+
+        await loadAllRecipes();
+        renderMyPosts();
+        renderSavedRecipes();
+    } catch (err) {
+        console.error("Error loading account:", err);
+    }
+}
+
 
 async function loadAllRecipes() {
     try {
@@ -150,7 +173,6 @@ function initTabs() {
 window.addEventListener("load", () => {
     initTabs();
     initSubmitRecipe();
-    loadAllRecipes();
-    renderMyPosts();
-    renderSavedRecipes();
+    loadAccount();
 });
+
