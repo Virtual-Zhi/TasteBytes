@@ -69,7 +69,7 @@ function renderRecipes(recipesToShow) {
         if (isLoggedIn) {
             const added = userCollection.has(recipe._id);
             buttons += `<button class="add-to-collection-btn ${added ? 'added' : ''}" onclick="toggleCollection('${recipe._id}')">
-                ${added ? '✓ In Collection' : '+ Add to Collection'}
+                ${added ? 'Remove from Collection' : '+ Add to Collection'}
             </button>`;
         }
 
