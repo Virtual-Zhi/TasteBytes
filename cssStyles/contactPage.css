@@ -1,46 +1,45 @@
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(to right, #ff914d, #ff4d6d);
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 .contact {
     background: #fff;
     padding: 1.5rem;
-    margin-top: 5rem;
+    margin-top: 10rem;
+    margin-bottom: 5rem;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     width: 700px;
     text-align: center;
     position: relative;
     overflow: hidden;
+    justify-self: center;
 }
 
 /* Title */
 .contact h1 {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     color: #ff4d6d;
     font-size: 1.8rem;
 }
 
+.contact h2 {
+    margin-bottom: 1.5rem;
+    color: #333;
+    font-size: 1.2rem;
+    font-weight: normal;
+}
+
 /* Input groups */
-.input-group {
+.contact .input-group {
     margin-bottom: 1rem;
     text-align: left;
 }
 
-.input-group label {
+.contact .input-group label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: bold;
     color: #333;
 }
 
-.input-group input {
+.contact .input-group input {
     width: 97.5%;
     padding: 0.5rem;
     border: 1px solid #ccc;
@@ -50,13 +49,13 @@ body {
     transition: border 0.3s ease, box-shadow 0.3s ease;
 }
 
-.input-group input:focus {
+.contact .input-group input:focus {
     border: 1px solid #ff4d6d;
     box-shadow: 0 0 5px rgba(255, 77, 109, 0.4);
 }
 
-/* Buttons */
-button {
+/* Buttons inside contact only */
+.contact button {
     width: 100%;
     padding: 0.8rem;
     background: #ff4d6d;
@@ -69,13 +68,13 @@ button {
     transition: background 0.3s ease, transform 0.2s ease;
 }
 
-button:hover {
+.contact button:hover {
     background: #d7263d;
     transform: scale(1.03);
 }
 
-
-.form {
+/* Form animation */
+.contact .form {
     position: absolute;
     width: 100%;
     top: 0;
@@ -86,7 +85,7 @@ button:hover {
     transition: transform 0.5s ease, opacity 0.5s ease;
 }
 
-.form.active {
+.contact .form.active {
     transform: translateX(0);
     opacity: 1;
     pointer-events: auto;

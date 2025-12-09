@@ -7,8 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TasteBytes - Login</title>
     <meta name="description" content="">
-    <link rel="stylesheet" href="../cssStyles/contactPage.css">
     <link rel="stylesheet" href="../cssStyles/menuStyles.css">
+    <link rel="stylesheet" href="../cssStyles/contactPage.css">
+
 </head>
 
 <body>
@@ -56,6 +57,53 @@
             Thank you, message sent! We will contact you within the next business day.
         </p>
     </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+
+            <div class="footer-column">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="./htmlPages/recipes.html">Recipes</a></li>
+                    <li><a href="./htmlPages/categories.html">Categories</a></li>
+                    <li><a href="./htmlPages/tips.html">Cooking Tips</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>TasteBuds</h4>
+                <ul>
+                    <li><a href="#" id="termsLink">Terms & Conditions</a></li>
+                    <li><a href="#" id="privacyLink">Privacy Policy</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Subscribe To Our Newsletter</h4>
+                <form class="subscribe-form" id="subscribe-form">
+                    <input type="email" id="subscribeEmail" placeholder="Enter email address" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 TasteBuds. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Popup -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Recipe Details</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <p id="modalMessage"></p>
+        </div>
+    </div>
+    <div id="notification" class="notification"></div>
 
     <script src="../jsScripts/contactPage.js"></script>
     <script src="../jsScripts/menuJS.js"></script>

@@ -9,8 +9,8 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     const name = document.getElementById("name").value;
     const number = document.getElementById("number").value;
     const message = document.getElementById("message").value;
-
-    document.getElementById("successMessage").style.display = "block"; 
+    
+    showModal("Thank you", "We greatly appreciate any feedback and we will respond to inquiries as soon as we can!");
 
     this.reset(); 
 
