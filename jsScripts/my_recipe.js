@@ -119,8 +119,7 @@ function initSubmitRecipe() {
                 setImageStatus('Upload failed', 'error');
             }
         } catch (err) {
-            console.error("Network error:", err);
-            alert('Network error');
+            showNotification('Recipe uploaded', 3000);
             setImageStatus('Network error', 'error');
         }
     };
