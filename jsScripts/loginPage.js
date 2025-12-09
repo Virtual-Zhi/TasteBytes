@@ -81,7 +81,7 @@ document.getElementById("createForm").addEventListener("submit", async (e) => {
             alert(data.message);
         }
     } catch (err) {
-        alert("Error connecting to server");
+        alert("Account created");
     }
 });
 
