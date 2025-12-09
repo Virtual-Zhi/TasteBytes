@@ -1,7 +1,8 @@
+// get hamburger menu and nav links elements
 const hamburger = document.getElementById('hamburger');
 const navLinks = document.getElementById('navLinks');
 
-// HTML content for the popup
+// html content for the popup modals
 const termsContent = `
     <p>By accessing and using TasteBytes, you agree to follow our community guidelines and policies. 
     Memberships and recipe submissions are non-transferable. We reserve the right to update these terms at any time.</p>
@@ -23,13 +24,13 @@ const privacyContent = `
     </ul>
 `;
 
-
+// toggle hamburger menu open/close
 hamburger.addEventListener('click', () => {
     hamburger.classList.toggle('active');
     navLinks.classList.toggle('active');
 });
 
-
+// shrink navbar when scrolling down
 window.addEventListener("scroll", function () {
     const navbar = document.querySelector(".navbar");
     if (window.scrollY > 25) {
@@ -39,7 +40,7 @@ window.addEventListener("scroll", function () {
     }
 });
 
-
+// check login status and update nav links accordingly
 window.onload = async () => {
     const navLinks = document.getElementById("navLinks");
     const signinBtn = document.querySelector(".signin-btn");
@@ -47,6 +48,7 @@ window.onload = async () => {
     try {
         const token = localStorage.getItem("token");
         if (!token) {
+            // if no token, show sign in link
             signinBtn.textContent = "Sign In";
             if (location.pathname.endsWith("index.html") || location.pathname.endsWith("TasteBytes/")) {
                 signinBtn.href = "./pages/login.html";
@@ -56,6 +58,7 @@ window.onload = async () => {
             return;
         }
 
+        // fetch profile with token
         const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/profile", {
             method: "GET",
             headers: { Authorization: `Bearer ${token}` }
@@ -64,6 +67,7 @@ window.onload = async () => {
         if (res.ok) {
             const data = await res.json();
 
+            // remove sign in button and add dropdown menu
             navLinks.removeChild(signinBtn);
 
             const profileMenu = document.createElement("div");
@@ -77,12 +81,14 @@ window.onload = async () => {
         <div class="dropdown-content">
             <a href="${prefix}pages/my_account.html">Profile</a>
             <a href="${prefix}pages/my_recipes.html">My Recipes</a>
+            <a href="${prefix}pages/my_recipes.html">Upload a Recipe</a>
             <a href="#" id="logoutBtn">Logout</a>
         </div>
     `;
 
             navLinks.appendChild(profileMenu);
 
+            // logout handler
             document.getElementById("logoutBtn").addEventListener("click", async (e) => {
                 e.preventDefault();
                 await fetch("https://tastebytes-6498b743cd23.herokuapp.com/logout", {
@@ -98,6 +104,7 @@ window.onload = async () => {
                 }
             });
         } else {
+            // if token invalid, reset to sign in
             localStorage.removeItem("token");
             signinBtn.textContent = "Sign In";
             if (location.pathname.endsWith("index.html") || location.pathname.endsWith("TasteBytes/")) {
@@ -107,13 +114,11 @@ window.onload = async () => {
             }
         }
     } catch (err) {
-        console.error("Error checking login:", err);
+        console.error("error checking login:", err);
     }
 };
 
-
-
-
+// show notification banner
 function showNotification(message, duration = 3000) {
     const notification = document.getElementById('notification');
     notification.textContent = message;
@@ -124,7 +129,7 @@ function showNotification(message, duration = 3000) {
     }, duration);
 }
 
-
+// show modal popup
 function showModal(title, message) {
     const modal = document.getElementById('eventModal');
     const modalTitle = document.getElementById('modalTitle');
@@ -135,7 +140,7 @@ function showModal(title, message) {
     modal.style.display = 'block';
 }
 
-
+// subscribe form handler
 document.getElementById('subscribe-form').addEventListener('submit', function (event) {
     event.preventDefault();
     const emailInput = document.getElementById('subscribeEmail');
@@ -148,12 +153,12 @@ document.getElementById('subscribe-form').addEventListener('submit', function (e
     }
 });
 
-
+// close modal button
 document.getElementById('closeModal').addEventListener('click', function () {
     document.getElementById('eventModal').style.display = 'none';
 });
 
-
+// close modal when clicking outside of it
 window.addEventListener('click', function (event) {
     const modal = document.getElementById('eventModal');
     if (event.target === modal) {
@@ -161,12 +166,14 @@ window.addEventListener('click', function (event) {
     }
 });
 
+// open terms modal
 document.getElementById('termsLink').addEventListener('click', (e) => {
     e.preventDefault();
     showModal('Terms & Conditions', termsContent);
     showNotification('Opened Terms & Conditions');
 });
 
+// open privacy modal
 document.getElementById('privacyLink').addEventListener('click', (e) => {
     e.preventDefault();
     showModal('Privacy Policy', privacyContent);
