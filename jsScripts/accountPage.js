@@ -1,4 +1,3 @@
-// dashboard.js
 let profileData = null;
 let allRecipes = [];
 
@@ -43,7 +42,5 @@ window.addEventListener("load", () => {
     document.querySelectorAll(".dashboardLink").forEach(x =>
         x.onclick = e => { e.preventDefault(); showDashboard(dashboard, dynamic); }
     );
-
-    // My Recipes link will be handled by my_recipes.js
     loadAccount();
 });

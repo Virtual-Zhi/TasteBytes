@@ -11,7 +11,6 @@ const client = new OAuth2Client(
 async function handleAuth(req, res) {
     const db = getDB();
 
-    // ---------------- CREATE ACCOUNT ----------------
     if (req.method === "POST" && req.url === "/create_account") {
         let body = "";
         req.on("data", chunk => (body += chunk));
@@ -47,7 +46,6 @@ async function handleAuth(req, res) {
         return true;
     }
 
-    // ---------------- LOGIN ----------------
     if (req.method === "POST" && req.url === "/login") {
         let body = "";
         req.on("data", chunk => (body += chunk));
@@ -68,7 +66,6 @@ async function handleAuth(req, res) {
 
                 // Use user._id as token
                 const token = user._id.toString();
-
                 // Store session in Mongo
                 await db.collection("sessions").updateOne(
                     { _id: token },
@@ -93,7 +90,6 @@ async function handleAuth(req, res) {
         return true;
     }
 
-    // ---------------- GOOGLE LOGIN ----------------
     if (req.method === "POST" && req.url === "/google_login") {
         let body = "";
         req.on("data", chunk => (body += chunk));
@@ -162,8 +158,6 @@ async function handleAuth(req, res) {
     }
 
 
-
-    // ---------------- LOGOUT ----------------
     if (req.method === "POST" && req.url === "/logout") {
         const authHeader = req.headers.authorization;
         if (authHeader) {

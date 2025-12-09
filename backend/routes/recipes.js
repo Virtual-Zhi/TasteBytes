@@ -28,8 +28,7 @@ async function getSession(req, db) {
 
 async function handleRecipes(req, res) {
     const db = getDB();
-
-    // Post recipe
+    
     if (req.method === "POST" && req.url === "/post_recipe") {
         const session = await getSession(req, db);
         res.setHeader("Content-Type", "application/json");
@@ -204,7 +203,6 @@ async function handleRecipes(req, res) {
 
     }
 
-    // ---------------- POST /recipes/:id/rate ----------------
     if (req.method === "POST" && req.url.startsWith("/recipes/") && req.url.endsWith("/rate")) {
         res.setHeader("Content-Type", "application/json");
         const session = await getSession(req, db);

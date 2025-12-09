@@ -107,7 +107,6 @@ const client = google.accounts.oauth2.initCodeClient({
             alert("Network error during Google login: " + err.message);
         }
     }
-
 });
 
 document.querySelectorAll(".google-btn").forEach(btn => {

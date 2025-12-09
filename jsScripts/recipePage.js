@@ -2,6 +2,7 @@ let recipes = [];
 let userCollection = new Set();
 let isLoggedIn = false;
 let userPlan;
+
 async function checkLogin() {
     try {
         const token = localStorage.getItem("token");
@@ -49,7 +50,6 @@ async function loadRecipes() {
     }
 }
 
-
 function viewRecipe(recipeId) {
     window.location.href = `../pages/view-recipe.html?id=${recipeId}`;
 }
@@ -76,32 +76,25 @@ function renderRecipes(recipesToShow) {
         return `
           <div class="recipe-card">
             <div class="recipe-image">
-              <img src="${imgSrc}" alt="${escapeHtml(recipe.title || 'Recipe image')}" loading="lazy" />
+              <img src="${imgSrc}" alt="${recipe.title || 'Recipe image'}" loading="lazy" />
             </div>
             <div class="recipe-content">
-              <h2 class="recipe-title">${escapeHtml(recipe.title)}</h2>
-              <span class="recipe-type">${escapeHtml(recipe.type || '')}</span>
+              <h2 class="recipe-title">${recipe.title}</h2>
+              <span class="recipe-type">${recipe.type || ''}</span>
               <div class="recipe-meta">
-                <span>⏱ ${escapeHtml(String(recipe.prepTime || 0))} min</span>
+                <span>⏱ ${String(recipe.prepTime || 0)} min</span>
                 <span>⭐ ${avgRating}/5 (${ratingCount} ratings)</span>
               </div>
               <div class="recipe-ingredients">
-                <strong>Ingredients:</strong> ${escapeHtml((recipe.ingredients || []).slice(0, 3).join(', '))}${(recipe.ingredients || []).length > 3 ? '…' : ''}
+                <strong>Ingredients:</strong> ${(recipe.ingredients || []).slice(0, 3).join(', ')}${(recipe.ingredients || []).length > 3 ? '…' : ''}
               </div>
               <div class="recipe-owner">
-                <p>Made by: ${escapeHtml(recipe.ownerName || recipe.ownerId)}</p>
+                <p>Made by: ${recipe.ownerName || recipe.ownerId}</p>
               </div>
               <div class="recipe-actions">${buttons}</div>
             </div>
           </div>`;
     }).join('');
-}
-
-function escapeHtml(str) {
-    return String(str)
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
 }
 
 // Search + filter: name search runs only when includeName is true
@@ -161,7 +154,6 @@ async function toggleCollection(recipeId) {
     }
 }
 
-
 function clearFilters() {
     document.getElementById('typeFilter').value = '';
     document.getElementById('ingredientFilter').value = '';
@@ -204,9 +196,9 @@ async function loader() {
     if (q && searchInput) {
         searchInput.value = q;
         filterRecipes(true);
-    } else
+    } else {
         filterRecipes(false);
+    }
 }
 
 loader();
-

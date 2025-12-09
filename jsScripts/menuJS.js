@@ -98,7 +98,6 @@ window.onload = async () => {
                 }
             });
         } else {
-            // fallback if token invalid
             localStorage.removeItem("token");
             signinBtn.textContent = "Sign In";
             if (location.pathname.endsWith("index.html") || location.pathname.endsWith("TasteBytes/")) {
