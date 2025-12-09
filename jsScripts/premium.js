@@ -1,5 +1,7 @@
 document.getElementById("checkout-form").addEventListener("submit", async function (e) {
     e.preventDefault();
+
+    // get token and fetch
     const token = localStorage.getItem("token");
     try {
         const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/get_premium", {

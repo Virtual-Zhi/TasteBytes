@@ -32,6 +32,7 @@ function viewRecipe(id) {
     window.location.href = `./pages/view-recipe.html?id=${id}`;
 }
 
+// shuffle so we get differnt featured
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -40,12 +41,14 @@ function shuffle(array) {
     return array;
 }
 
+// makes it so ingredients don't all get displayed
 function shortIngredients(arr, maxItems = 3) {
     if (!Array.isArray(arr) || arr.length === 0) return "";
     const items = arr.slice(0, maxItems);
     return items.join(", ") + (arr.length > maxItems ? "…" : "");
 }
 
+// cut the text short
 function shortText(str, maxWords = 20) {
     if (!str) return "";
     const words = str.trim().split(/\s+/);
@@ -53,6 +56,7 @@ function shortText(str, maxWords = 20) {
     return words.slice(0, maxWords).join(" ") + "…";
 }
 
+// get the highlights
 async function fetchAndRenderHighlights() {
     try {
         const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/recipes/", { credentials: "include" });
@@ -71,6 +75,8 @@ async function fetchAndRenderHighlights() {
     }
 }
 
+
+// get featured items
 function renderFeatured(items) {
     const grid = document.querySelector(".featured-recipes .recipe-grid");
     if (!grid) return;

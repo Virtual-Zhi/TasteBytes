@@ -29,6 +29,7 @@ async function getSession(req, db) {
 async function handleRecipes(req, res) {
     const db = getDB();
 
+    // posting
     if (req.method === "POST" && req.url === "/post_recipe") {
         const session = await getSession(req, db);
         res.setHeader("Content-Type", "application/json");
@@ -126,6 +127,7 @@ async function handleRecipes(req, res) {
         return true;
     }
 
+    // recipes
     if (req.method === "GET" && req.url.startsWith("/recipes")) {
         const parts = req.url.split("/").filter(Boolean);
         res.setHeader("Content-Type", "application/json");
@@ -203,6 +205,7 @@ async function handleRecipes(req, res) {
 
     }
 
+    // Rating system
     if (req.method === "POST" && req.url.startsWith("/recipes/") && req.url.endsWith("/rate")) {
         res.setHeader("Content-Type", "application/json");
         const session = await getSession(req, db);
@@ -248,6 +251,7 @@ async function handleRecipes(req, res) {
         return res.end(JSON.stringify({ message: "Rating saved", rating: updatedRating, userRating: parsed }));
     }
 
+    // saving
     if (req.method === "POST" && req.url === "/save_recipe") {
         res.setHeader("Content-Type", "application/json");
         const session = await getSession(req, db);
@@ -271,6 +275,7 @@ async function handleRecipes(req, res) {
         return res.end(JSON.stringify({ message: "Recipe saved" }));
     }
 
+    // removing saved recipes
     if (req.method === "POST" && req.url === "/remove_recipe") {
         res.setHeader("Content-Type", "application/json");
         const session = await getSession(req, db);

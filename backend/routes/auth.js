@@ -11,6 +11,7 @@ const client = new OAuth2Client(
 async function handleAuth(req, res) {
     const db = getDB();
 
+    // create account
     if (req.method === "POST" && req.url === "/create_account") {
         let body = "";
         req.on("data", chunk => (body += chunk));
@@ -24,6 +25,7 @@ async function handleAuth(req, res) {
                     return res.end(JSON.stringify({ message: "Username already exists" }));
                 }
 
+                // data fields
                 await db.collection("users").insertOne({
                     username: newUsername,
                     email: newEmail,
@@ -46,6 +48,7 @@ async function handleAuth(req, res) {
         return true;
     }
 
+    // login
     if (req.method === "POST" && req.url === "/login") {
         let body = "";
         req.on("data", chunk => (body += chunk));
@@ -90,14 +93,13 @@ async function handleAuth(req, res) {
         return true;
     }
 
+    // google login
     if (req.method === "POST" && req.url === "/google_login") {
         let body = "";
         req.on("data", chunk => (body += chunk));
         req.on("end", async () => {
             try {
                 const { code } = JSON.parse(body);
-
-                // Exchange code for tokens
                 const { tokens } = await client.getToken({
                     code,
                     redirect_uri: "postmessage"
@@ -157,7 +159,7 @@ async function handleAuth(req, res) {
         return true;
     }
 
-
+    // logout
     if (req.method === "POST" && req.url === "/logout") {
         const authHeader = req.headers.authorization;
         if (authHeader) {

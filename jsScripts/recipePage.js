@@ -23,13 +23,14 @@ async function checkLogin() {
             userPlan = data.plan || "Free";
         } else {
             isLoggedIn = false;
-            localStorage.removeItem("token"); // clear invalid token
+            localStorage.removeItem("token");
         }
     } catch {
         isLoggedIn = false;
     }
 }
 
+// Get all recipes
 async function loadRecipes() {
     try {
         const token = localStorage.getItem("token");
@@ -54,6 +55,7 @@ function viewRecipe(recipeId) {
     window.location.href = `../pages/view-recipe.html?id=${recipeId}`;
 }
 
+// Display recipe
 function renderRecipes(recipesToShow) {
     const grid = document.getElementById('recipesGrid');
     if (!recipesToShow?.length) {

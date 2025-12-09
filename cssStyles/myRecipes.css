@@ -158,3 +158,18 @@ textarea {
     margin-bottom: 4px;
     color: #555;
 }
+
+.recipe-card .recipe-ingredients {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    max-width: 100%;
+}
+
+.recipe-card h2,
+.recipe-card .recipe-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

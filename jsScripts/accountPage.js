@@ -14,7 +14,8 @@ async function loadAccount() {
 
         if (!res.ok || data.message === "Not logged in") return;
 
-        profileData = data; // backend returns user object directly
+        // profile data and load profile
+        profileData = data;
         document.querySelector(".profile-banner h2").textContent = profileData.username;
         document.querySelector(".profile-banner p").textContent = `@${profileData.username}`;
         const stats = document.querySelectorAll(".stat-card .number");

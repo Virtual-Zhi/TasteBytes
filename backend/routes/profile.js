@@ -3,6 +3,7 @@ const { getDB } = require("../utils/db");
 async function handleProfile(req, res) {
     const db = getDB();
 
+    // get user profile
     if (req.method === "GET" && req.url === "/profile") {
         const authHeader = req.headers.authorization;
         if (!authHeader) return res.end(JSON.stringify({ message: "Not logged in" }));
@@ -18,6 +19,7 @@ async function handleProfile(req, res) {
         return res.end(JSON.stringify(safeUser));
     }
 
+    // add premium to user
     if (req.method === "POST" && req.url === "/get_premium") {
         const authHeader = req.headers.authorization;
         if (!authHeader) {

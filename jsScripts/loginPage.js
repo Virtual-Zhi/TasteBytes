@@ -21,6 +21,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
+    // login, sending inputs to the route
     try {
         const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/login", {
             method: "POST",
@@ -55,12 +56,14 @@ document.getElementById("createForm").addEventListener("submit", async (e) => {
         return;
     }
 
+    // ensure password has these characters
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
     if (!passwordRegex.test(newPassword)) {
         alert("Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.");
         return;
     }
 
+    // Make account
     try {
         const res = await fetch("https://tastebytes-6498b743cd23.herokuapp.com/create_account", {
             method: "POST",
@@ -70,7 +73,7 @@ document.getElementById("createForm").addEventListener("submit", async (e) => {
         const data = await res.json();
 
         if (res.ok) {
-            alert("Account created! Please log in.");
+            showNotification("Account created! Please log in.", 3000);
             createForm.classList.remove("active");
             loginForm.classList.add("active");
             formTitle.textContent = "Login";

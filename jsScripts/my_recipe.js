@@ -44,6 +44,7 @@ function setImageStatus(text, cls = "") {
     }
 }
 
+// submit recipe
 function initSubmitRecipe() {
     const form = document.getElementById('recipeForm');
     if (!form || form.dataset.submitListenerAttached) return;
@@ -60,6 +61,8 @@ function initSubmitRecipe() {
 
     form.onsubmit = async e => {
         e.preventDefault();
+
+        // Catch every single input
         const title = document.getElementById('recipeName')?.value.trim();
         const type = document.getElementById('recipeType')?.value || "";
         const prepTimeRaw = document.getElementById('prepTime')?.value || "";
@@ -73,6 +76,7 @@ function initSubmitRecipe() {
             alert("Please fill all required fields correctly."); return;
         }
 
+        // Checker for photo (credit: code from google)
         const file = fileInput?.files?.[0];
         if (!file) { alert("A photo is required."); return; }
         if (file.size > 5 * 1024 * 1024) { alert("Image too large."); return; }
@@ -94,7 +98,7 @@ function initSubmitRecipe() {
             const data = await res.json();
             if (res.ok) {
                 setImageStatus('Image uploaded', 'uploaded');
-                alert('Recipe posted successfully!');
+                showNotification('Recipe posted successfully!', 3000);
                 form.reset();
                 setTimeout(() => setImageStatus('No image selected', 'no-image'), 1500);
                 if (data.recipe) {
@@ -117,6 +121,7 @@ function viewRecipe(recipeId) {
     window.location.href = `view-recipe.html?id=${recipeId}`;
 }
 
+// get posts
 function renderMyPosts() {
     const postsContainer = document.getElementById("myPostsList");
     if (!profileData || !allRecipes.length) {
@@ -135,6 +140,8 @@ function renderMyPosts() {
     </div>`).join("") : "<p>No posts yet.</p>";
 }
 
+
+// get saved
 function renderSavedRecipes() {
     const savedContainer = document.getElementById("savedRecipesList");
     if (!profileData || !allRecipes.length) {
@@ -153,6 +160,7 @@ function renderSavedRecipes() {
     </div>`).join("") : "<p>No saved recipes yet.</p>";
 }
 
+// initialize tabs
 function initTabs() {
     const tabs = document.querySelectorAll(".tab");
     const contents = document.querySelectorAll(".content");
