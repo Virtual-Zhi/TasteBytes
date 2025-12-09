@@ -43,10 +43,11 @@ body {
 
 #imageContainer {
     padding: 15px;
+    margin: 15px
 }
 
 .recipe-image {
-    width: 95%;
+    width: 100%;
     height: 400px;
     object-fit: cover;
     display: block;
